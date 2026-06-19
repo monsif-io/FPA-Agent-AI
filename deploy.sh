@@ -87,9 +87,10 @@ RESPONSE=$(curl -s -X POST "https://api.render.com/v1/services" \
   -d "$PAYLOAD")
 
 # Check response
-ERROR_MSG=$(echo "$RESPONSE" | python3 -c "import sys, json; print(json.load(sys.stdin).get('message', ''))" 2>/dev/null)
-SERVICE_ID=$(echo "$RESPONSE" | python3 -c "import sys, json; print(json.load(sys.stdin).get('id', ''))" 2>/dev/null)
-SERVICE_URL=$(echo "$RESPONSE" | python3 -c "import sys, json; print(json.load(sys.stdin).get('url', ''))" 2>/dev/null)
+ERROR_MSG=$(echo "$RESPONSE" | python3 -c "import sys, json; data=json.load(sys.stdin); print(data.get('message', '') if 'message' in data else data.get('error', ''))" 2>/dev/null)
+SERVICE_ID=$(echo "$RESPONSE" | python3 -c "import sys, json; print(json.load(sys.stdin).get('service', {}).get('id', ''))" 2>/dev/null)
+SERVICE_URL=$(echo "$RESPONSE" | python3 -c "import sys, json; print(json.load(sys.stdin).get('service', {}).get('url', ''))" 2>/dev/null)
+
 
 if [ -n "$SERVICE_ID" ]; then
   echo "✅ Service created successfully!"
