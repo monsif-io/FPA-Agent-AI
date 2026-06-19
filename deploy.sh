@@ -1,6 +1,7 @@
 #!/bin/bash
-# deploy-render.sh
+# deploy.sh
 # Deploys the FPA-Agent-AI Next.js app to Render using the Render API.
+
 # Get API_KEY from environment or .env.local
 API_KEY="${RENDER_API_KEY}"
 if [ -z "$API_KEY" ]; then
@@ -28,15 +29,15 @@ ENV_VARS_JSON="["
 FIRST=true
 
 while IFS= read -r line || [ -n "$line" ]; do
-  # Skip comments and empty lines
+  # Skip comments, empty lines, and the deploy API key itself
   [[ "$line" =~ ^#.*$ ]] && continue
   [[ -z "$line" ]] && continue
+  [[ "$line" =~ ^RENDER_API_KEY=.*$ ]] && continue
   
   # Extract key and value
   KEY=$(echo "$line" | cut -d'=' -f1)
   VALUE=$(echo "$line" | cut -d'=' -f2-)
   
-  # If value contains references, keep it simple
   # Escape quotes for JSON
   KEY_ESC=$(echo "$KEY" | sed 's/"/\\"/g' | xargs)
   VALUE_ESC=$(echo "$VALUE" | sed 's/"/\\"/g' | xargs)
