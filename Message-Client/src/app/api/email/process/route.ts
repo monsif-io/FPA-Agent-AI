@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import getDb from '@/lib/db';
-import nodemailer from 'nodemailer';
+import { sendMail } from '@/lib/mail';
 
 // ============================================================
 // ENHANCED SYSTEM PROMPT for Email Commands
@@ -382,16 +382,7 @@ export async function POST(req: NextRequest) {
     // ============================================================
     if (result) {
       try {
-        const transporter = nodemailer.createTransport({
-          host: getSetting('smtp_host'),
-          port: parseInt(getSetting('smtp_port') || '465'),
-          secure: parseInt(getSetting('smtp_port') || '465') === 465,
-          auth: { user: getSetting('smtp_user'), pass: getSetting('smtp_pass') },
-          tls: { rejectUnauthorized: false },
-        });
-
-        await transporter.sendMail({
-          from: `"FPA Collections Agent" <${getSetting('smtp_from')}>`,
+        await sendMail({
           to: adminEmail,
           subject: `✅ FPA Agent: ${parsed.action} - Résultat`,
           html: `

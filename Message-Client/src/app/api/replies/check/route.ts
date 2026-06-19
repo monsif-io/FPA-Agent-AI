@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import getDb from '@/lib/db';
-import nodemailer from 'nodemailer';
+import { sendMail } from '@/lib/mail';
 
 // POST /api/replies/check - Check for client replies via catchmail.io and notify
 export async function POST() {
@@ -145,18 +145,9 @@ export async function POST() {
           // ============================================
           // 3. Send email notification to admin
           // ============================================
-          if (adminEmail && smtpHost) {
+          if (adminEmail) {
             try {
-              const transporter = nodemailer.createTransport({
-                host: smtpHost,
-                port: smtpPort,
-                secure: smtpPort === 465,
-                auth: { user: smtpUser, pass: smtpPass },
-                tls: { rejectUnauthorized: false },
-              });
-
-              await transporter.sendMail({
-                from: `"FPA Collections Agent" <${smtpFrom}>`,
+              await sendMail({
                 to: adminEmail,
                 subject: `📩 Réponse client: ${client.name} - ${reply.subject || '(Sans sujet)'}`,
                 html: `

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import getDb from '@/lib/db';
-import nodemailer from 'nodemailer';
+import { sendMail } from '@/lib/mail';
 import { generateTrackingId, wrapEmailWithTracking } from '@/lib/tracking';
 
 // POST /api/scheduler/run - Manually trigger the scheduler to check and send pending messages
@@ -27,17 +27,7 @@ export async function POST() {
       return NextResponse.json({ message: 'No messages to send', sent: 0 });
     }
 
-    // Setup SMTP
-    const transporter = nodemailer.createTransport({
-      host: getSetting('smtp_host'),
-      port: parseInt(getSetting('smtp_port') || '587'),
-      secure: getSetting('smtp_port') === '465',
-      auth: { user: getSetting('smtp_user'), pass: getSetting('smtp_pass') },
-      tls: { rejectUnauthorized: false },
-    });
-
     const companyName = getSetting('company_name') || 'FinancePro Advisory';
-    const smtpFrom = getSetting('smtp_from');
     let sent = 0;
     let failed = 0;
 
@@ -47,6 +37,7 @@ export async function POST() {
       biweekly: '+14 days',
       monthly: '+30 days',
     };
+
 
     for (const schedule of schedules) {
       try {
@@ -115,13 +106,17 @@ export async function POST() {
         const htmlBody = wrapEmailWithTracking(body.replace(/\n/g, '<br>'), trackingId);
 
         // Send email with tracking pixel
-        await transporter.sendMail({
-          from: `"${companyName}" <${smtpFrom}>`,
+        const mailResult = await sendMail({
           to: schedule.email as string,
           subject,
           text: body,
           html: htmlBody,
         });
+
+        if (!mailResult.success) {
+          throw new Error(mailResult.error || "Failed to send email");
+        }
+
 
         // Log success
         db.prepare(`

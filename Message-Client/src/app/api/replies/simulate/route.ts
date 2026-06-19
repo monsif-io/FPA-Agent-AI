@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import getDb from '@/lib/db';
-import nodemailer from 'nodemailer';
+import { sendMail } from '@/lib/mail';
 
 // POST /api/replies/simulate - Simulate a client reply by sending an email TO the client's catchmail address
 export async function POST(req: Request) {
@@ -18,44 +18,29 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Client non trouvé' }, { status: 404 });
     }
 
-    const getSetting = (key: string): string => {
-      const row = db.prepare('SELECT value FROM settings WHERE key = ?').get(key) as { value: string } | undefined;
-      return row?.value || '';
-    };
-
-    const smtpHost = getSetting('smtp_host');
-    const smtpPort = parseInt(getSetting('smtp_port') || '465');
-    const smtpUser = getSetting('smtp_user');
-    const smtpPass = getSetting('smtp_pass');
-
-    // Send the "reply" email to the client's catchmail address
-    // We send from a DIFFERENT from name to simulate the client replying
-    const transporter = nodemailer.createTransport({
-      host: smtpHost,
-      port: smtpPort,
-      secure: smtpPort === 465,
-      auth: { user: smtpUser, pass: smtpPass },
-      tls: { rejectUnauthorized: false },
-    });
-
     const defaultReply = `Bonjour,\n\nMerci pour votre rappel. Je suis au courant de cette facture et je compte effectuer le paiement avant la fin de la semaine.\n\nPeut-on discuter d'un échelonnement possible ?\n\nCordialement,\n${client.name}`;
 
     const message = replyMessage || defaultReply;
 
     // Send the reply TO the client's catchmail address (simulating the client sending from their own address)
-    // We use a different "from" name to distinguish it from our sent emails
-    await transporter.sendMail({
-      from: `"${client.name}" <${smtpUser}>`,
+    // We override senderName to client.name to make it show as from them, even though Brevo will send it from our verified sender account
+    const mailResult = await sendMail({
       to: client.email as string,
       subject: `Re: Rappel de paiement - ${client.company || 'Facture'}`,
       text: message,
       html: message.replace(/\n/g, '<br>'),
+      senderName: client.name as string,
+      replyTo: `${client.name} <reply-${client.id}@client-reply.test>`,
       headers: {
         'X-Simulated-Reply': 'true',
         'X-Client-Name': client.name as string,
-        'Reply-To': `${client.name} <reply-${client.id}@client-reply.test>`,
       },
     });
+
+    if (!mailResult.success) {
+      return NextResponse.json({ error: mailResult.error || 'Erreur lors de la simulation' }, { status: 500 });
+    }
+
 
     return NextResponse.json({
       success: true,

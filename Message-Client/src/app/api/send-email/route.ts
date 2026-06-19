@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import getDb from '@/lib/db';
-import nodemailer from 'nodemailer';
+import { sendMail } from '@/lib/mail';
 import { generateTrackingId, wrapEmailWithTracking } from '@/lib/tracking';
 
 // POST /api/send-email - send an email to a specific client
@@ -21,11 +21,6 @@ export async function POST(req: Request) {
       return row?.value || '';
     };
 
-    const smtpHost = getSetting('smtp_host');
-    const smtpPort = parseInt(getSetting('smtp_port') || '587');
-    const smtpUser = getSetting('smtp_user');
-    const smtpPass = getSetting('smtp_pass');
-    const smtpFrom = getSetting('smtp_from');
     const companyName = getSetting('company_name');
 
     // Determine email content
@@ -65,27 +60,22 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Sujet et corps du message requis' }, { status: 400 });
     }
 
-    // Create transporter
-    const transporter = nodemailer.createTransport({
-      host: smtpHost,
-      port: smtpPort,
-      secure: smtpPort === 465,
-      auth: { user: smtpUser, pass: smtpPass },
-      tls: { rejectUnauthorized: false },
-    });
-
     // Generate tracking ID
     const trackingId = generateTrackingId();
     const htmlBody = wrapEmailWithTracking(finalBody.replace(/\n/g, '<br>'), trackingId);
 
     // Send email with tracking pixel
-    await transporter.sendMail({
-      from: `"${companyName}" <${smtpFrom}>`,
+    const mailResult = await sendMail({
       to: client.email as string,
       subject: finalSubject,
       text: finalBody,
       html: htmlBody,
     });
+
+    if (!mailResult.success) {
+      return NextResponse.json({ error: mailResult.error || 'Erreur d\'envoi' }, { status: 500 });
+    }
+
 
     // Log the message with tracking ID
     db.prepare(`

@@ -141,6 +141,20 @@ function initializeDatabase(database: Database.Database) {
   const templateCount = database.prepare('SELECT COUNT(*) as count FROM templates').get() as { count: number };
   if (templateCount.count === 0) {
     seedDefaults(database);
+  } else {
+    // Make sure new settings keys are seeded even if database already exists
+    const insertSetting = database.prepare(`
+      INSERT OR IGNORE INTO settings (key, value, category) VALUES (?, ?, ?)
+    `);
+    const newSettings = [
+      ['email_send_method', 'brevo', 'email'],
+      ['brevo_api_key', '', 'email'],
+      ['brevo_sender_email', 'contact@alfa-01.com', 'email'],
+      ['brevo_sender_name', 'Alfa-01', 'email'],
+    ];
+    for (const [key, value, category] of newSettings) {
+      insertSetting.run(key, value, category);
+    }
   }
 
   // Seed default automation flows if none exist
@@ -217,6 +231,10 @@ Direction Générale - {{company_name}}`,
   `);
 
   const defaultSettings = [
+    ['email_send_method', 'brevo', 'email'],
+    ['brevo_api_key', '', 'email'],
+    ['brevo_sender_email', 'contact@alfa-01.com', 'email'],
+    ['brevo_sender_name', 'Alfa-01', 'email'],
     ['smtp_host', 'panel.allinone-cloud.website', 'email'],
     ['smtp_port', '465', 'email'],
     ['smtp_user', 'sarah@alfa-01.com', 'email'],
@@ -228,6 +246,7 @@ Direction Générale - {{company_name}}`,
     ['imap_user', 'sarah@alfa-01.com', 'email'],
     ['imap_pass', 'Js1F9bP97vtR', 'email'],
     ['admin_email', 'sarah@alfa-01.com', 'email'],
+
     ['telegram_bot_token', '8785971609:AAFdEBG3jV9F0RVXqFm12u-ddq-OlTK76Rk', 'telegram'],
     ['telegram_admin_chat_id', '', 'telegram'],
     ['notification_daily_report', 'true', 'notifications'],

@@ -87,29 +87,76 @@ export default function SettingsPage() {
             {activeTab === 'email' && (
               <div>
                 <div className="settings-section">
-                  <h3 className="settings-section-title">Configuration SMTP (Envoi)</h3>
-                  <p className="settings-section-desc">Paramètres pour l&apos;envoi des emails de relance</p>
+                  <h3 className="settings-section-title">Méthode d&apos;envoi des e-mails</h3>
+                  <p className="settings-section-desc">Choisissez comment les relances par e-mail seront expédiées</p>
                   <div className="settings-field">
-                    <div><div className="settings-field-label">Serveur SMTP</div><div className="settings-field-desc">Hostname du serveur SMTP</div></div>
-                    <input className="form-input" value={settings.smtp_host || ''} onChange={(e) => updateSetting('smtp_host', e.target.value)} placeholder="mail.exemple.com" />
-                  </div>
-                  <div className="settings-field">
-                    <div><div className="settings-field-label">Port SMTP</div></div>
-                    <input className="form-input" value={settings.smtp_port || ''} onChange={(e) => updateSetting('smtp_port', e.target.value)} placeholder="587" />
-                  </div>
-                  <div className="settings-field">
-                    <div><div className="settings-field-label">Utilisateur SMTP</div></div>
-                    <input className="form-input" value={settings.smtp_user || ''} onChange={(e) => updateSetting('smtp_user', e.target.value)} />
-                  </div>
-                  <div className="settings-field">
-                    <div><div className="settings-field-label">Mot de passe SMTP</div></div>
-                    <input className="form-input" type="password" value={settings.smtp_pass || ''} onChange={(e) => updateSetting('smtp_pass', e.target.value)} />
-                  </div>
-                  <div className="settings-field">
-                    <div><div className="settings-field-label">Email expéditeur</div></div>
-                    <input className="form-input" value={settings.smtp_from || ''} onChange={(e) => updateSetting('smtp_from', e.target.value)} />
+                    <div>
+                      <div className="settings-field-label">Méthode d&apos;envoi</div>
+                      <div className="settings-field-desc">Brevo API est recommandé pour la production sur Render</div>
+                    </div>
+                    <select className="form-select" value={settings.email_send_method || 'brevo'} onChange={(e) => updateSetting('email_send_method', e.target.value)}>
+                      <option value="brevo">Brevo API (HTTP - Recommandé)</option>
+                      <option value="smtp">Serveur SMTP Classique</option>
+                    </select>
                   </div>
                 </div>
+
+                {/* BREVO CONFIG */}
+                {(settings.email_send_method || 'brevo') === 'brevo' && (
+                  <div className="settings-section">
+                    <h3 className="settings-section-title">Configuration Brevo API</h3>
+                    <p className="settings-section-desc">Paramètres d&apos;envoi via la plate-forme Brevo (ex Sendinblue)</p>
+                    <div className="settings-field">
+                      <div>
+                        <div className="settings-field-label">Clé API Brevo (v3)</div>
+                        <div className="settings-field-desc">Clé API pour s&apos;authentifier auprès de Brevo</div>
+                      </div>
+                      <input className="form-input" type="password" value={settings.brevo_api_key || ''} onChange={(e) => updateSetting('brevo_api_key', e.target.value)} placeholder="xkeysib-..." />
+                    </div>
+                    <div className="settings-field">
+                      <div>
+                        <div className="settings-field-label">Email expéditeur</div>
+                        <div className="settings-field-desc">L&apos;adresse email vérifiée sur votre compte Brevo</div>
+                      </div>
+                      <input className="form-input" value={settings.brevo_sender_email || ''} onChange={(e) => updateSetting('brevo_sender_email', e.target.value)} placeholder="contact@alfa-01.com" />
+                    </div>
+                    <div className="settings-field">
+                      <div>
+                        <div className="settings-field-label">Nom de l&apos;expéditeur</div>
+                        <div className="settings-field-desc">Le nom affiché aux clients</div>
+                      </div>
+                      <input className="form-input" value={settings.brevo_sender_name || ''} onChange={(e) => updateSetting('brevo_sender_name', e.target.value)} placeholder="Alfa-01" />
+                    </div>
+                  </div>
+                )}
+
+                {/* SMTP CONFIG */}
+                {settings.email_send_method === 'smtp' && (
+                  <div className="settings-section">
+                    <h3 className="settings-section-title">Configuration SMTP (Envoi)</h3>
+                    <p className="settings-section-desc">Paramètres pour l&apos;envoi des emails via un serveur SMTP</p>
+                    <div className="settings-field">
+                      <div><div className="settings-field-label">Serveur SMTP</div><div className="settings-field-desc">Hostname du serveur SMTP</div></div>
+                      <input className="form-input" value={settings.smtp_host || ''} onChange={(e) => updateSetting('smtp_host', e.target.value)} placeholder="mail.exemple.com" />
+                    </div>
+                    <div className="settings-field">
+                      <div><div className="settings-field-label">Port SMTP</div></div>
+                      <input className="form-input" value={settings.smtp_port || ''} onChange={(e) => updateSetting('smtp_port', e.target.value)} placeholder="587" />
+                    </div>
+                    <div className="settings-field">
+                      <div><div className="settings-field-label">Utilisateur SMTP</div></div>
+                      <input className="form-input" value={settings.smtp_user || ''} onChange={(e) => updateSetting('smtp_user', e.target.value)} />
+                    </div>
+                    <div className="settings-field">
+                      <div><div className="settings-field-label">Mot de passe SMTP</div></div>
+                      <input className="form-input" type="password" value={settings.smtp_pass || ''} onChange={(e) => updateSetting('smtp_pass', e.target.value)} />
+                    </div>
+                    <div className="settings-field">
+                      <div><div className="settings-field-label">Email expéditeur</div></div>
+                      <input className="form-input" value={settings.smtp_from || ''} onChange={(e) => updateSetting('smtp_from', e.target.value)} />
+                    </div>
+                  </div>
+                )}
 
                 <div className="settings-section">
                   <h3 className="settings-section-title">Configuration IMAP (Réception)</h3>

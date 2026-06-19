@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import getDb from '@/lib/db';
+import { sendMail } from '@/lib/mail';
 
 // 1x1 transparent PNG pixel
 const TRACKING_PIXEL = Buffer.from(
@@ -80,17 +81,7 @@ export async function GET(
         const adminEmail = getSetting('admin_email');
         if (adminEmail) {
           try {
-            const nodemailer = await import('nodemailer');
-            const transporter = nodemailer.default.createTransport({
-              host: getSetting('smtp_host'),
-              port: parseInt(getSetting('smtp_port') || '465'),
-              secure: parseInt(getSetting('smtp_port') || '465') === 465,
-              auth: { user: getSetting('smtp_user'), pass: getSetting('smtp_pass') },
-              tls: { rejectUnauthorized: false },
-            });
-
-            await transporter.sendMail({
-              from: `"FPA Collections Agent" <${getSetting('smtp_from')}>`,
+            await sendMail({
               to: adminEmail,
               subject: `📬 Email ouvert - ${message.client_name}`,
               html: `

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import getDb from '@/lib/db';
-import nodemailer from 'nodemailer';
+import { sendMail } from '@/lib/mail';
 import { generateTrackingId, wrapEmailWithTracking } from '@/lib/tracking';
 
 // ============================================================
@@ -633,25 +633,20 @@ async function handleCallbackQuery(
           const row = db.prepare('SELECT value FROM settings WHERE key = ?').get(key) as { value: string } | undefined;
           return row?.value || '';
         };
-        const transporter = nodemailer.createTransport({
-          host: getSetting('smtp_host'),
-          port: parseInt(getSetting('smtp_port') || '465'),
-          secure: parseInt(getSetting('smtp_port') || '465') === 465,
-          auth: { user: getSetting('smtp_user'), pass: getSetting('smtp_pass') },
-          tls: { rejectUnauthorized: false },
-        });
-
         const companyName = getSetting('company_name') || 'FinancePro Advisory';
         const trackingId = generateTrackingId();
         const htmlBody = wrapEmailWithTracking(actionData.body.replace(/\n/g, '<br>'), trackingId);
 
-        await transporter.sendMail({
-          from: `"${companyName}" <${getSetting('smtp_from')}>`,
+        const mailResult = await sendMail({
           to: actionData.email,
           subject: actionData.subject,
           text: actionData.body,
           html: htmlBody,
         });
+
+        if (!mailResult.success) {
+          throw new Error(mailResult.error || "Failed to send email");
+        }
 
         // Log the message with tracking ID
         db.prepare(`INSERT INTO message_logs (client_id, channel, subject, body, status, tracking_id, sent_at) VALUES (?, 'email', ?, ?, 'sent', ?, datetime('now'))`).run(
@@ -674,27 +669,23 @@ async function handleCallbackQuery(
         return row?.value || '';
       };
       const companyName = getSetting('company_name') || 'FinancePro Advisory';
-      const transporter = nodemailer.createTransport({
-        host: getSetting('smtp_host'),
-        port: parseInt(getSetting('smtp_port') || '465'),
-        secure: parseInt(getSetting('smtp_port') || '465') === 465,
-        auth: { user: getSetting('smtp_user'), pass: getSetting('smtp_pass') },
-        tls: { rejectUnauthorized: false },
-      });
-
       for (const client of clients) {
         try {
           const subject = replaceVars(actionData.subject, client, companyName);
           const body = replaceVars(actionData.body, client, companyName);
           const bTrackId = generateTrackingId();
           const bHtml = wrapEmailWithTracking(body.replace(/\n/g, '<br>'), bTrackId);
-          await transporter.sendMail({
-            from: `"${companyName}" <${getSetting('smtp_from')}>`,
+          
+          const mailResult = await sendMail({
             to: client.email as string,
             subject,
             text: body,
             html: bHtml,
           });
+
+          if (!mailResult.success) {
+            throw new Error(mailResult.error || "Failed to send email");
+          }
           db.prepare(`INSERT INTO message_logs (client_id, channel, subject, body, status, tracking_id, sent_at) VALUES (?, 'email', ?, ?, 'sent', ?, datetime('now'))`).run(client.id, subject, body, bTrackId);
           db.prepare("UPDATE clients SET messages_sent = messages_sent + 1, last_message_at = datetime('now') WHERE id = ?").run(client.id);
           sent++;
