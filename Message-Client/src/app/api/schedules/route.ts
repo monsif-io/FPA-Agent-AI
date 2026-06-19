@@ -26,7 +26,7 @@ export async function PUT(req: NextRequest) {
   try {
     const db = getDb();
     const body = await req.json();
-    const { id, frequency, timeOfDay, isActive, templateId } = body;
+    const { id, frequency, timeOfDay, isActive, templateId, runNow } = body;
 
     if (!id) return NextResponse.json({ error: 'ID requis' }, { status: 400 });
 
@@ -37,6 +37,7 @@ export async function PUT(req: NextRequest) {
     if (timeOfDay !== undefined) { fields.push('time_of_day = ?'); values.push(timeOfDay); }
     if (isActive !== undefined) { fields.push('is_active = ?'); values.push(isActive ? 1 : 0); }
     if (templateId !== undefined) { fields.push('template_id = ?'); values.push(templateId); }
+    if (runNow === true) { fields.push("next_run = datetime('now')"); }
 
     if (fields.length > 0) {
       values.push(id);
