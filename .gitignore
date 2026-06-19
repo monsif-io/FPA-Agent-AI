@@ -1,0 +1,15 @@
+# Ignore large backup zip files
+Message-Client.zip
+
+# Next.js build artifacts and modules
+Message-Client/node_modules/
+Message-Client/.next/
+Message-Client/tsconfig.tsbuildinfo
+
+# SQLite Database and local data
+Message-Client/data/
+Message-Client/data/*
+
+# Misc
+.DS_Store
+*.tsbuildinfo
