@@ -6,9 +6,9 @@ Message-Client/node_modules/
 Message-Client/.next/
 Message-Client/tsconfig.tsbuildinfo
 
-# SQLite Database and local data
-Message-Client/data/
-Message-Client/data/*
+# SQLite Database temporary files
+*.db-shm
+*.db-wal
 
 # Misc
 .DS_Store

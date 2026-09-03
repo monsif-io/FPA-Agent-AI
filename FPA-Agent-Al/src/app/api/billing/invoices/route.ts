@@ -19,7 +19,9 @@ export async function POST(request: Request) {
     const {
       client_id, invoice_date, due_date, reference_text, salutation,
       subtotal_ht, tva_rate, tva_amount, disbursements, total_ttc,
-      amount_in_words, payment_terms, items
+      amount_in_words, payment_terms, items,
+      document_type, closing_text, contact_name, show_coupon,
+      show_watermark, show_bank_details, show_debours, service_date_text
     } = body;
 
     if (!client_id || !items || !Array.isArray(items) || items.length === 0) {
@@ -54,7 +56,15 @@ export async function POST(request: Request) {
         payment_terms,
         status: 'draft',
         source_type: 'manual',
-        pdf_path: ''
+        pdf_path: '',
+        document_type: document_type || 'Note d\'honoraires',
+        closing_text: closing_text || '',
+        contact_name: contact_name || '',
+        show_coupon: show_coupon !== undefined ? (show_coupon ? 1 : 0) : 1,
+        show_watermark: show_watermark !== undefined ? (show_watermark ? 1 : 0) : 1,
+        show_bank_details: show_bank_details !== undefined ? (show_bank_details ? 1 : 0) : 1,
+        show_debours: show_debours !== undefined ? (show_debours ? 1 : 0) : 1,
+        service_date_text: service_date_text || ''
       },
       items
     );

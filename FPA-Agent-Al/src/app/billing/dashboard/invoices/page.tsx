@@ -23,6 +23,10 @@ interface Invoice {
   pdf_path: string;
   sent_method: string;
   collections_client_id?: number | null;
+  document_type?: string;
+  salutation?: string;
+  client_ice?: string;
+  service_date_text?: string;
   items?: {
     description: string;
     detail: string;
@@ -322,11 +326,29 @@ export default function InvoicesPage() {
                 
                 {/* Client detail card */}
                 <div style={{ background: 'var(--gray-50)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--gray-200)' }}>
-                  <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--gray-400)', textTransform: 'uppercase', marginBottom: '0.35rem' }}>Client</div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--gray-400)', textTransform: 'uppercase' }}>Client</span>
+                    <span style={{ fontSize: '0.72rem', padding: '0.15rem 0.45rem', borderRadius: '4px', background: 'var(--gold-light)', color: 'var(--gold-dark)', fontWeight: 600 }}>
+                      {invoiceDetails.document_type || "Note d'honoraires"}
+                    </span>
+                  </div>
                   <div style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--anthracite)' }}>{invoiceDetails.client_name}</div>
-                  <div style={{ fontSize: '0.85rem', color: 'var(--gray-500)', marginTop: '0.2rem' }}>Email: {invoiceDetails.client_email}</div>
+                  {invoiceDetails.salutation && (
+                    <div style={{ fontSize: '0.82rem', color: 'var(--gray-600)', marginTop: '0.15rem', fontStyle: 'italic' }}>{invoiceDetails.salutation}</div>
+                  )}
+                  {invoiceDetails.client_ice && (
+                    <div style={{ fontSize: '0.8rem', color: 'var(--gray-500)', marginTop: '0.15rem' }}>ICE: {invoiceDetails.client_ice}</div>
+                  )}
+                  <div style={{ fontSize: '0.8rem', color: 'var(--gray-500)', marginTop: '0.15rem' }}>Email: {invoiceDetails.client_email}</div>
                   {invoiceDetails.reference_text && (
-                    <div style={{ fontSize: '0.85rem', color: 'var(--gray-500)', marginTop: '0.2rem' }}>Réf: {invoiceDetails.reference_text}</div>
+                    <div style={{ fontSize: '0.82rem', color: 'var(--info)', marginTop: '0.35rem', fontWeight: 500 }}>
+                      Réf: {invoiceDetails.reference_text}
+                    </div>
+                  )}
+                  {invoiceDetails.service_date_text && (
+                    <div style={{ fontSize: '0.78rem', color: 'var(--gray-600)', marginTop: '0.2rem' }}>
+                      {invoiceDetails.service_date_text}
+                    </div>
                   )}
                 </div>
 

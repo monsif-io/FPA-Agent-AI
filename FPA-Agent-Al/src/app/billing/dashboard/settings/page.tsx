@@ -52,7 +52,7 @@ export default function BillingSettingsPage() {
         const data = await res.json();
         showToast('Logo mis à jour avec succès', 'success');
         updateSetting('company_logo_path', data.logoPath);
-        setLogoVersion(Date.now()); // Force refresh the image preview
+        setLogoVersion(Date.now());
       } else {
         const data = await res.json();
         showToast(data.error || 'Erreur lors du téléversement', 'error');
@@ -87,7 +87,8 @@ export default function BillingSettingsPage() {
   const tabs = [
     { id: 'company', label: 'Entreprise & Siège', icon: 'buildings' },
     { id: 'bank', label: 'Coordonnées Bancaires', icon: 'bank' },
-    { id: 'invoice', label: 'Format & Textes PDF', icon: 'file-text' },
+    { id: 'invoice', label: 'Modèle & Textes PDF', icon: 'file-text' },
+    { id: 'display', label: 'Design & Affichage PDF', icon: 'sliders-horizontal' },
   ];
 
   if (loading) {
@@ -104,18 +105,20 @@ export default function BillingSettingsPage() {
       {/* Page Header */}
       <div className="billing-page-header">
         <div>
-          <h2>Paramètres de Facturation</h2>
-          <p style={{ color: 'var(--gray-500)', fontSize: '0.875rem' }}>Configurez les informations de votre entreprise et le style de vos factures.</p>
+          <h2>Paramètres de Facturation & PDF</h2>
+          <p style={{ color: 'var(--gray-500)', fontSize: '0.875rem' }}>
+            Personnalisez tous les éléments, mentions légales et textes qui apparaissent sur vos factures PDF.
+          </p>
         </div>
         <button className="billing-btn billing-btn-primary" onClick={saveSettings} disabled={saving}>
-          {saving ? 'Enregistrement...' : 'Enregistrer'}
+          {saving ? 'Enregistrement...' : 'Enregistrer les modifications'}
         </button>
       </div>
 
-      <div className="settings-layout" style={{ display: 'grid', gridTemplateColumns: '250px 1fr', gap: '1.5rem' }}>
-        {/* Left Side Tabs */}
-        <div style={{ background: '#fff', borderRadius: 'var(--radius-lg)', border: '1px solid var(--gray-200)', padding: '0.5rem', height: 'fit-content' }}>
-          <ul className="settings-nav" style={{ listStyle: 'none', padding: 0 }}>
+      <div className="settings-layout" style={{ display: 'grid', gridTemplateColumns: '260px 1fr', gap: '1.5rem' }}>
+        {/* Left Side Navigation Tabs */}
+        <div style={{ background: '#fff', borderRadius: 'var(--radius-lg)', border: '1px solid var(--gray-200)', padding: '0.6rem', height: 'fit-content' }}>
+          <ul className="settings-nav" style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
             {tabs.map((tab) => (
               <li
                 key={tab.id}
@@ -135,23 +138,27 @@ export default function BillingSettingsPage() {
                   background: activeTab === tab.id ? 'var(--info-bg)' : 'transparent',
                 }}
               >
-                <i className={`ph ph-${tab.icon}`} style={{ fontSize: '1.1rem' }}></i>
+                <i className={`ph ph-${tab.icon}`} style={{ fontSize: '1.15rem' }}></i>
                 {tab.label}
               </li>
             ))}
           </ul>
         </div>
 
-        {/* Right Side Content Form */}
+        {/* Right Side Settings Form */}
         <div style={{ background: '#fff', borderRadius: 'var(--radius-lg)', border: '1px solid var(--gray-200)', padding: '2rem' }}>
+          
           {/* TAB 1: Company Settings */}
           {activeTab === 'company' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.1rem', borderBottom: '1px solid var(--gray-100)', paddingBottom: '0.5rem' }}>Informations de l'Émetteur</h3>
-              
+              <div>
+                <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.1rem', margin: '0 0 0.25rem 0' }}>Informations de l'Émetteur & Siège Social</h3>
+                <p style={{ fontSize: '0.8rem', color: 'var(--gray-500)', margin: 0 }}>Ces données apparaissent dans l'en-tête et le pied de page légal du PDF.</p>
+              </div>
+
               {/* Logo Upload Section */}
               <div style={{ display: 'flex', gap: '1.5rem', background: 'var(--gray-50)', padding: '1.25rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--gray-200)', alignItems: 'center' }}>
-                <div style={{ position: 'relative', width: '120px', height: '120px', background: '#fff', border: '2px dashed var(--gray-300)', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                <div style={{ position: 'relative', width: '130px', height: '100px', background: '#fff', border: '2px dashed var(--gray-300)', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                   {settings.company_logo_path ? (
                     /* eslint-disable-next-line @next/next/no-img-element */
                     <img 
@@ -172,13 +179,13 @@ export default function BillingSettingsPage() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                   <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--anthracite)' }}>Logo officiel de l'entreprise</label>
                   <p style={{ fontSize: '0.75rem', color: 'var(--gray-500)', margin: 0 }}>
-                    Ce logo apparaîtra en haut à gauche de toutes vos factures PDF.<br />
-                    Format recommandé: PNG transparent ou JPEG. Ratio horizontal (ex: 300x80 px).
+                    Ce logo apparaîtra centré en haut de toutes vos factures PDF.<br />
+                    Format recommandé: PNG transparent ou JPEG haute résolution (ex: 450x120 px).
                   </p>
                   
                   <div style={{ display: 'flex', alignItems: 'center', marginTop: '0.25rem' }}>
                     <label className="billing-btn billing-btn-secondary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', cursor: 'pointer', margin: 0 }}>
-                      <i className="ph ph-upload-simple"></i> Choisir une image
+                      <i className="ph ph-upload-simple"></i> Choisir une nouvelle image
                       <input 
                         type="file" 
                         accept="image/*" 
@@ -192,11 +199,12 @@ export default function BillingSettingsPage() {
 
               <div className="billing-settings-group">
                 <div className="form-group" style={{ gridColumn: 'span 2' }}>
-                  <label className="form-label" style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>Raison Sociale</label>
+                  <label className="form-label" style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>Raison Sociale Complète</label>
                   <input
                     type="text"
                     value={settings.company_name || ''}
                     onChange={(e) => updateSetting('company_name', e.target.value)}
+                    placeholder="Ex: Finance Pro Advisory S.A.R.L AU"
                     style={{ width: '100%', padding: '0.6rem 0.8rem', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', outline: 'none' }}
                   />
                 </div>
@@ -207,6 +215,7 @@ export default function BillingSettingsPage() {
                     type="text"
                     value={settings.company_address || ''}
                     onChange={(e) => updateSetting('company_address', e.target.value)}
+                    placeholder="Ex: Espace Paquet, Angle rue Mohammed Smiha et Pierre Parent, N° 423, 4ème étage - Casablanca"
                     style={{ width: '100%', padding: '0.6rem 0.8rem', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', outline: 'none' }}
                   />
                 </div>
@@ -217,16 +226,18 @@ export default function BillingSettingsPage() {
                     type="text"
                     value={settings.company_phone || ''}
                     onChange={(e) => updateSetting('company_phone', e.target.value)}
+                    placeholder="+212 522 905 893"
                     style={{ width: '100%', padding: '0.6rem 0.8rem', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', outline: 'none' }}
                   />
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label" style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>Email Administratif (From)</label>
+                  <label className="form-label" style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>Email Administratif</label>
                   <input
                     type="text"
                     value={settings.company_email || ''}
                     onChange={(e) => updateSetting('company_email', e.target.value)}
+                    placeholder="contact@financeproadvisory.com"
                     style={{ width: '100%', padding: '0.6rem 0.8rem', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', outline: 'none' }}
                   />
                 </div>
@@ -237,56 +248,7 @@ export default function BillingSettingsPage() {
                     type="text"
                     value={settings.company_website || ''}
                     onChange={(e) => updateSetting('company_website', e.target.value)}
-                    style={{ width: '100%', padding: '0.6rem 0.8rem', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', outline: 'none' }}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label" style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>R.C. (Registre Commerce)</label>
-                  <input
-                    type="text"
-                    value={settings.company_rc || ''}
-                    onChange={(e) => updateSetting('company_rc', e.target.value)}
-                    style={{ width: '100%', padding: '0.6rem 0.8rem', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', outline: 'none' }}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label" style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>Patente (T.P.)</label>
-                  <input
-                    type="text"
-                    value={settings.company_tp || ''}
-                    onChange={(e) => updateSetting('company_tp', e.target.value)}
-                    style={{ width: '100%', padding: '0.6rem 0.8rem', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', outline: 'none' }}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label" style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>Identifiant Fiscal (I.F.)</label>
-                  <input
-                    type="text"
-                    value={settings.company_if || ''}
-                    onChange={(e) => updateSetting('company_if', e.target.value)}
-                    style={{ width: '100%', padding: '0.6rem 0.8rem', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', outline: 'none' }}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label" style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>Numéro CNSS</label>
-                  <input
-                    type="text"
-                    value={settings.company_cnss || ''}
-                    onChange={(e) => updateSetting('company_cnss', e.target.value)}
-                    style={{ width: '100%', padding: '0.6rem 0.8rem', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', outline: 'none' }}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label" style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>Numéro ICE</label>
-                  <input
-                    type="text"
-                    value={settings.company_ice || ''}
-                    onChange={(e) => updateSetting('company_ice', e.target.value)}
+                    placeholder="www.financeproadvisory.com"
                     style={{ width: '100%', padding: '0.6rem 0.8rem', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', outline: 'none' }}
                   />
                 </div>
@@ -297,6 +259,7 @@ export default function BillingSettingsPage() {
                     type="text"
                     value={settings.company_manager || ''}
                     onChange={(e) => updateSetting('company_manager', e.target.value)}
+                    placeholder="Ex: Siham OUSAID"
                     style={{ width: '100%', padding: '0.6rem 0.8rem', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', outline: 'none' }}
                   />
                 </div>
@@ -307,6 +270,62 @@ export default function BillingSettingsPage() {
                     type="text"
                     value={settings.company_manager_title || ''}
                     onChange={(e) => updateSetting('company_manager_title', e.target.value)}
+                    placeholder="Ex: Associée Gérante"
+                    style={{ width: '100%', padding: '0.6rem 0.8rem', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', outline: 'none' }}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>R.C. (Registre Commerce)</label>
+                  <input
+                    type="text"
+                    value={settings.company_rc || ''}
+                    onChange={(e) => updateSetting('company_rc', e.target.value)}
+                    placeholder="360.159"
+                    style={{ width: '100%', padding: '0.6rem 0.8rem', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', outline: 'none' }}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>Patente (T.P.)</label>
+                  <input
+                    type="text"
+                    value={settings.company_tp || ''}
+                    onChange={(e) => updateSetting('company_tp', e.target.value)}
+                    placeholder="32182569"
+                    style={{ width: '100%', padding: '0.6rem 0.8rem', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', outline: 'none' }}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>Identifiant Fiscal (I.F.)</label>
+                  <input
+                    type="text"
+                    value={settings.company_if || ''}
+                    onChange={(e) => updateSetting('company_if', e.target.value)}
+                    placeholder="20681166"
+                    style={{ width: '100%', padding: '0.6rem 0.8rem', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', outline: 'none' }}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>Numéro CNSS</label>
+                  <input
+                    type="text"
+                    value={settings.company_cnss || ''}
+                    onChange={(e) => updateSetting('company_cnss', e.target.value)}
+                    placeholder="5182332"
+                    style={{ width: '100%', padding: '0.6rem 0.8rem', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', outline: 'none' }}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>Numéro ICE (Identifiant Commun de l'Entreprise)</label>
+                  <input
+                    type="text"
+                    value={settings.company_ice || ''}
+                    onChange={(e) => updateSetting('company_ice', e.target.value)}
+                    placeholder="001769356000082"
                     style={{ width: '100%', padding: '0.6rem 0.8rem', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', outline: 'none' }}
                   />
                 </div>
@@ -314,11 +333,14 @@ export default function BillingSettingsPage() {
             </div>
           )}
 
-          {/* TAB 2: Bank settings */}
+          {/* TAB 2: Bank Settings */}
           {activeTab === 'bank' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.1rem', borderBottom: '1px solid var(--gray-100)', paddingBottom: '0.5rem' }}>Coordonnées Bancaires de Règlement</h3>
-              
+              <div>
+                <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.1rem', margin: '0 0 0.25rem 0' }}>Coordonnées Bancaires de Règlement</h3>
+                <p style={{ fontSize: '0.8rem', color: 'var(--gray-500)', margin: 0 }}>Ces données sont imprimées dans le bloc bancaire en bas à gauche de la facture.</p>
+              </div>
+
               <div className="billing-settings-group" style={{ gridTemplateColumns: '1fr' }}>
                 <div className="form-group">
                   <label className="form-label" style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>Nom de l'établissement Bancaire</label>
@@ -332,12 +354,23 @@ export default function BillingSettingsPage() {
                 </div>
 
                 <div className="form-group">
+                  <label className="form-label" style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>Ordre de Virement / Bénéficiaire</label>
+                  <input
+                    type="text"
+                    value={settings.bank_order_of || ''}
+                    onChange={(e) => updateSetting('bank_order_of', e.target.value)}
+                    placeholder="Ex: Finance Pro Advisory"
+                    style={{ width: '100%', padding: '0.6rem 0.8rem', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', outline: 'none' }}
+                  />
+                </div>
+
+                <div className="form-group">
                   <label className="form-label" style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>Agence Bancaire / Ville</label>
                   <input
                     type="text"
                     value={settings.bank_branch || ''}
                     onChange={(e) => updateSetting('bank_branch', e.target.value)}
-                    placeholder="Ex: Bd. Massira AL Khadra, Maarif - Casablanca"
+                    placeholder="Ex: Bd. Massira AL Khadra, Maarif - Casablanca - Maroc"
                     style={{ width: '100%', padding: '0.6rem 0.8rem', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', outline: 'none' }}
                   />
                 </div>
@@ -348,7 +381,7 @@ export default function BillingSettingsPage() {
                     type="text"
                     value={settings.bank_rib || ''}
                     onChange={(e) => updateSetting('bank_rib', e.target.value)}
-                    placeholder="000 000 000000000000000000"
+                    placeholder="050 780 001 01 078302 420 01 39"
                     style={{ width: '100%', padding: '0.6rem 0.8rem', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', outline: 'none', letterSpacing: '0.05em' }}
                   />
                 </div>
@@ -356,12 +389,27 @@ export default function BillingSettingsPage() {
             </div>
           )}
 
-          {/* TAB 3: Invoice template & formatting settings */}
+          {/* TAB 3: Invoice Template & Texts */}
           {activeTab === 'invoice' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.1rem', borderBottom: '1px solid var(--gray-100)', paddingBottom: '0.5rem' }}>Paramètres du Modèle de Facture</h3>
-              
+              <div>
+                <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.1rem', margin: '0 0 0.25rem 0' }}>Paramètres du Modèle & Textes PDF</h3>
+                <p style={{ fontSize: '0.8rem', color: 'var(--gray-500)', margin: 0 }}>Configurez les intitulés par défaut, la numérotation, et les formules juridiques.</p>
+              </div>
+
               <div className="billing-settings-group">
+                <div className="form-group">
+                  <label className="form-label" style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>Type de Document par Défaut</label>
+                  <select
+                    value={settings.invoice_default_type || "Note d'honoraires"}
+                    onChange={(e) => updateSetting('invoice_default_type', e.target.value)}
+                    style={{ width: '100%', padding: '0.6rem 0.8rem', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', outline: 'none', background: '#fff' }}
+                  >
+                    <option value="Note d'honoraires">Note d'honoraires (Cabinet de Conseil / Audit)</option>
+                    <option value="Facture">Facture (Prestations de Services Standards)</option>
+                  </select>
+                </div>
+
                 <div className="form-group">
                   <label className="form-label" style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>Format Numéro Facture</label>
                   <input
@@ -371,7 +419,7 @@ export default function BillingSettingsPage() {
                     placeholder="Ex: {abbreviation}-{seq}-{year}"
                     style={{ width: '100%', padding: '0.6rem 0.8rem', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', outline: 'none' }}
                   />
-                  <span style={{ fontSize: '0.75rem', color: 'var(--gray-400)', marginTop: '0.2rem', display: 'block' }}>Raccourcis: {"{abbreviation}"}, {"{seq}"}, {"{year}"}</span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--gray-400)', marginTop: '0.2rem', display: 'block' }}>Variables: {"{abbreviation}"}, {"{seq}"}, {"{year}"}</span>
                 </div>
 
                 <div className="form-group">
@@ -394,33 +442,36 @@ export default function BillingSettingsPage() {
                   />
                 </div>
 
-                <div className="form-group">
-                  <label className="form-label" style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>Devise</label>
-                  <input
-                    type="text"
-                    value={settings.invoice_currency || ''}
-                    onChange={(e) => updateSetting('invoice_currency', e.target.value)}
-                    style={{ width: '100%', padding: '0.6rem 0.8rem', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', outline: 'none' }}
-                  />
-                </div>
-
                 <div className="form-group" style={{ gridColumn: 'span 2' }}>
                   <label className="form-label" style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>Texte de Salutation (Introduction)</label>
                   <textarea
-                    rows={3}
+                    rows={2}
                     value={settings.invoice_salutation || ''}
                     onChange={(e) => updateSetting('invoice_salutation', e.target.value)}
+                    placeholder="Nous vous souhaitons bonne réception de notre note d'honoraires et vous remercions de votre aimable règlement"
                     style={{ width: '100%', padding: '0.6rem 0.8rem', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', outline: 'none', resize: 'vertical', fontFamily: 'var(--font-body)' }}
                   />
                 </div>
 
                 <div className="form-group" style={{ gridColumn: 'span 2' }}>
-                  <label className="form-label" style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>Texte d'Écriture de Somme (Clôture)</label>
-                  <textarea
-                    rows={2}
+                  <label className="form-label" style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>Phrase d'Arrêté pour Note d'honoraires</label>
+                  <input
+                    type="text"
                     value={settings.invoice_closing || ''}
                     onChange={(e) => updateSetting('invoice_closing', e.target.value)}
-                    style={{ width: '100%', padding: '0.6rem 0.8rem', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', outline: 'none', resize: 'none', fontFamily: 'var(--font-body)' }}
+                    placeholder="Arrêtée la Présente Note d'honoraires à la somme de"
+                    style={{ width: '100%', padding: '0.6rem 0.8rem', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', outline: 'none' }}
+                  />
+                </div>
+
+                <div className="form-group" style={{ gridColumn: 'span 2' }}>
+                  <label className="form-label" style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>Phrase d'Arrêté pour Facture Standard</label>
+                  <input
+                    type="text"
+                    value={settings.invoice_closing_facture || 'Arrêté la présente facture à la somme de'}
+                    onChange={(e) => updateSetting('invoice_closing_facture', e.target.value)}
+                    placeholder="Arrêté la présente facture à la somme de"
+                    style={{ width: '100%', padding: '0.6rem 0.8rem', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', outline: 'none' }}
                   />
                 </div>
 
@@ -430,6 +481,7 @@ export default function BillingSettingsPage() {
                     type="text"
                     value={settings.tva_legal_note || ''}
                     onChange={(e) => updateSetting('tva_legal_note', e.target.value)}
+                    placeholder="TVA payée sur les encaissements déductible au moment du règlement."
                     style={{ width: '100%', padding: '0.6rem 0.8rem', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', outline: 'none' }}
                   />
                 </div>
@@ -440,12 +492,134 @@ export default function BillingSettingsPage() {
                     type="text"
                     value={settings.payment_legal_note || ''}
                     onChange={(e) => updateSetting('payment_legal_note', e.target.value)}
+                    placeholder="Règlement à réception de facture."
+                    style={{ width: '100%', padding: '0.6rem 0.8rem', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', outline: 'none' }}
+                  />
+                </div>
+
+                <div className="form-group" style={{ gridColumn: 'span 2' }}>
+                  <label className="form-label" style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>Titre du Coupon Détachable (Bas droite)</label>
+                  <input
+                    type="text"
+                    value={settings.coupon_title || 'A JOINDRE AU REGLEMENT'}
+                    onChange={(e) => updateSetting('coupon_title', e.target.value)}
+                    placeholder="A JOINDRE AU REGLEMENT"
                     style={{ width: '100%', padding: '0.6rem 0.8rem', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', outline: 'none' }}
                   />
                 </div>
               </div>
             </div>
           )}
+
+          {/* TAB 4: Visual & PDF Display Options */}
+          {activeTab === 'display' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div>
+                <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.1rem', margin: '0 0 0.25rem 0' }}>Options de Design & d'Affichage PDF</h3>
+                <p style={{ fontSize: '0.8rem', color: 'var(--gray-500)', margin: 0 }}>Activez ou désactivez les blocs visuels affichés sur vos documents PDF.</p>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                
+                {/* Toggle 1: Watermark */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem', background: 'var(--gray-50)', borderRadius: 'var(--radius-md)', border: '1px solid var(--gray-200)' }}>
+                  <div>
+                    <strong style={{ fontSize: '0.9rem', color: 'var(--anthracite)' }}>Filigrane en Arrière-Plan (Watermark)</strong>
+                    <p style={{ fontSize: '0.75rem', color: 'var(--gray-500)', margin: '0.2rem 0 0 0' }}>Affiche le monogramme FPA transparent et centré au milieu de la page.</p>
+                  </div>
+                  <label className="switch" style={{ position: 'relative', display: 'inline-block', width: '46px', height: '24px' }}>
+                    <input 
+                      type="checkbox" 
+                      checked={settings.pdf_show_watermark !== 'false'} 
+                      onChange={(e) => updateSetting('pdf_show_watermark', e.target.checked ? 'true' : 'false')} 
+                      style={{ opacity: 0, width: 0, height: 0 }}
+                    />
+                    <span style={{ position: 'absolute', cursor: 'pointer', top: 0, left: 0, right: 0, bottom: 0, background: settings.pdf_show_watermark !== 'false' ? 'var(--info)' : '#ccc', borderRadius: '24px', transition: '.3s' }}>
+                      <span style={{ position: 'absolute', height: '18px', width: '18px', left: settings.pdf_show_watermark !== 'false' ? '25px' : '3px', bottom: '3px', background: '#fff', borderRadius: '50%', transition: '.3s' }}></span>
+                    </span>
+                  </label>
+                </div>
+
+                {/* Opacity slider */}
+                {settings.pdf_show_watermark !== 'false' && (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.8rem 1rem', background: '#fff', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', marginLeft: '1rem' }}>
+                    <span style={{ fontSize: '0.8rem', fontWeight: 600 }}>Opacité du Filigrane</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                      <input 
+                        type="range" 
+                        min="0.01" 
+                        max="0.15" 
+                        step="0.005"
+                        value={settings.pdf_watermark_opacity || '0.045'}
+                        onChange={(e) => updateSetting('pdf_watermark_opacity', e.target.value)}
+                        style={{ width: '130px' }}
+                      />
+                      <span style={{ fontSize: '0.8rem', color: 'var(--gray-600)', minWidth: '40px' }}>{Math.round(Number(settings.pdf_watermark_opacity || '0.045') * 100)}%</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Toggle 2: Tear-off Coupon */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem', background: 'var(--gray-50)', borderRadius: 'var(--radius-md)', border: '1px solid var(--gray-200)' }}>
+                  <div>
+                    <strong style={{ fontSize: '0.9rem', color: 'var(--anthracite)' }}>Coupon Détachable de Règlement (À Joindre au Règlement)</strong>
+                    <p style={{ fontSize: '0.75rem', color: 'var(--gray-500)', margin: '0.2rem 0 0 0' }}>Cadre en bas à droite indiquant le numéro de facture, l'abréviation du client et le montant TTC.</p>
+                  </div>
+                  <label className="switch" style={{ position: 'relative', display: 'inline-block', width: '46px', height: '24px' }}>
+                    <input 
+                      type="checkbox" 
+                      checked={settings.pdf_show_coupon !== 'false'} 
+                      onChange={(e) => updateSetting('pdf_show_coupon', e.target.checked ? 'true' : 'false')} 
+                      style={{ opacity: 0, width: 0, height: 0 }}
+                    />
+                    <span style={{ position: 'absolute', cursor: 'pointer', top: 0, left: 0, right: 0, bottom: 0, background: settings.pdf_show_coupon !== 'false' ? 'var(--info)' : '#ccc', borderRadius: '24px', transition: '.3s' }}>
+                      <span style={{ position: 'absolute', height: '18px', width: '18px', left: settings.pdf_show_coupon !== 'false' ? '25px' : '3px', bottom: '3px', background: '#fff', borderRadius: '50%', transition: '.3s' }}></span>
+                    </span>
+                  </label>
+                </div>
+
+                {/* Toggle 3: Bank Details on PDF */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem', background: 'var(--gray-50)', borderRadius: 'var(--radius-md)', border: '1px solid var(--gray-200)' }}>
+                  <div>
+                    <strong style={{ fontSize: '0.9rem', color: 'var(--anthracite)' }}>Afficher les Références Bancaires</strong>
+                    <p style={{ fontSize: '0.75rem', color: 'var(--gray-500)', margin: '0.2rem 0 0 0' }}>Imprime le bloc CFG BANK, Agence et Code RIB dans le coin inférieur gauche.</p>
+                  </div>
+                  <label className="switch" style={{ position: 'relative', display: 'inline-block', width: '46px', height: '24px' }}>
+                    <input 
+                      type="checkbox" 
+                      checked={settings.pdf_show_bank !== 'false'} 
+                      onChange={(e) => updateSetting('pdf_show_bank', e.target.checked ? 'true' : 'false')} 
+                      style={{ opacity: 0, width: 0, height: 0 }}
+                    />
+                    <span style={{ position: 'absolute', cursor: 'pointer', top: 0, left: 0, right: 0, bottom: 0, background: settings.pdf_show_bank !== 'false' ? 'var(--info)' : '#ccc', borderRadius: '24px', transition: '.3s' }}>
+                      <span style={{ position: 'absolute', height: '18px', width: '18px', left: settings.pdf_show_bank !== 'false' ? '25px' : '3px', bottom: '3px', background: '#fff', borderRadius: '50%', transition: '.3s' }}></span>
+                    </span>
+                  </label>
+                </div>
+
+                {/* Toggle 4: Débours line */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem', background: 'var(--gray-50)', borderRadius: 'var(--radius-md)', border: '1px solid var(--gray-200)' }}>
+                  <div>
+                    <strong style={{ fontSize: '0.9rem', color: 'var(--anthracite)' }}>Afficher la Ligne Débours par Défaut</strong>
+                    <p style={{ fontSize: '0.75rem', color: 'var(--gray-500)', margin: '0.2rem 0 0 0' }}>Affiche "Débours - MAD" dans le tableau des totaux même en l'absence de frais déboursés.</p>
+                  </div>
+                  <label className="switch" style={{ position: 'relative', display: 'inline-block', width: '46px', height: '24px' }}>
+                    <input 
+                      type="checkbox" 
+                      checked={settings.pdf_show_debours !== 'false'} 
+                      onChange={(e) => updateSetting('pdf_show_debours', e.target.checked ? 'true' : 'false')} 
+                      style={{ opacity: 0, width: 0, height: 0 }}
+                    />
+                    <span style={{ position: 'absolute', cursor: 'pointer', top: 0, left: 0, right: 0, bottom: 0, background: settings.pdf_show_debours !== 'false' ? 'var(--info)' : '#ccc', borderRadius: '24px', transition: '.3s' }}>
+                      <span style={{ position: 'absolute', height: '18px', width: '18px', left: settings.pdf_show_debours !== 'false' ? '25px' : '3px', bottom: '3px', background: '#fff', borderRadius: '50%', transition: '.3s' }}></span>
+                    </span>
+                  </label>
+                </div>
+
+              </div>
+            </div>
+          )}
+
         </div>
       </div>
     </div>

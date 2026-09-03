@@ -296,7 +296,7 @@ function seedBillingDemoData(database: Database.Database) {
     'M.',
     'cmr@yahoo.com',
     '+212 537 567 890',
-    'Avenue El Araar, Hay Riad, B.P. 2048',
+    'Av. El Araar, Hay Riad, Rabat\nB.P. 2048 - Maroc',
     'Rabat',
     'Maroc',
     '001771456000030',
@@ -306,35 +306,67 @@ function seedBillingDemoData(database: Database.Database) {
   ).lastInsertRowid;
 
   const wasalId = insertClient.run(
-    'WASAL SERVICES S.A.',
-    'WASAL',
-    'Amina BENJELLOUN',
+    'WASAL SARL AU',
+    'WAS',
+    'Salwa IDRISSI ABOULAHJOUL',
     'Mme',
     'wasal@yahoo.com',
     '+212 522 345 678',
-    'Angle Boulevard d\'Anfa et Rue Moulay Ali',
+    'Immeuble Bershka, Bd Massira Al Khadra, 2ème étage\nCasablanca - Maroc',
     'Casablanca',
     'Maroc',
-    '002135678900012',
+    '003613160000005',
     '78912',
     '55443322',
     'Contrat de services récurrents'
   ).lastInsertRowid;
 
   const p3cId = insertClient.run(
-    'PAR3COM SARL',
-    'PAR3COM',
-    'Youssef TAZI',
-    'M.',
+    'PAR3 COM',
+    'P3C',
+    'Bouchra OUTAGHANI',
+    'Mme',
     'par3com@yahoo.com',
     '+212 522 987 654',
-    'Technopark Casablanca, Route de Nouaceur',
+    '19, rue Ben Al Hadj Safi Addine - Casa Plaisance,\nAnfa, Casablanca 20050',
     'Casablanca',
     'Maroc',
-    '001543890123456',
+    '000203596000092',
     '34567',
     '11223344',
     'Client PME'
+  ).lastInsertRowid;
+
+  const alfaId = insertClient.run(
+    'ALFA HOLDING GROUP S.A.',
+    'ALFA',
+    'Mehdi ALAMI',
+    'M.',
+    'comptabilite@alfaholding.ma',
+    '+212 522 678 900',
+    'Tour Casablanca Finance City, 14ème étage, Casa-Anfa\nCasablanca 20200',
+    'Casablanca',
+    'Maroc',
+    '001892345000078',
+    '51234',
+    '44332211',
+    'Grand compte holding multisectoriel'
+  ).lastInsertRowid;
+
+  const innoId = insertClient.run(
+    'INNOVATECH SOLUTIONS SARL',
+    'INNO',
+    'Karim BENCHEKROUN',
+    'M.',
+    'finance@innovatech.ma',
+    '+212 522 789 012',
+    'Casablanca Nearshore Park, Shore 3, 1100 Bd Al Qods\nSidi Maarouf, Casablanca',
+    'Casablanca',
+    'Maroc',
+    '002456789000041',
+    '62890',
+    '33221100',
+    'Entreprise IT & Fintech'
   ).lastInsertRowid;
 
   // 3. Insert Demo Invoices
@@ -342,8 +374,10 @@ function seedBillingDemoData(database: Database.Database) {
     INSERT INTO invoices (
       invoice_number, invoice_date, due_date, client_id, reference_text, salutation,
       subtotal_ht, tva_rate, tva_amount, disbursements, total_ttc, amount_in_words,
-      payment_terms, status, pdf_path, source_type, created_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now', ?))
+      payment_terms, status, pdf_path, source_type, created_at,
+      document_type, closing_text, contact_name, show_coupon, show_watermark,
+      show_bank_details, show_debours, service_date_text
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now', ?), ?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
   const insertItem = database.prepare(`
@@ -351,25 +385,29 @@ function seedBillingDemoData(database: Database.Database) {
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
-  // Invoice 1: CMR Paid
+  // Invoice 1: CMR (Marché Public / Institutionnel - Note d'honoraires)
   const inv1Id = insertInvoice.run(
     'CMR-F0001-2026',
     '2026-03-03',
     '2026-04-03',
     cmrId,
     'Notre Marché n° 03/2025/CMR et Votre Ordre de service du 15 Juillet 2025',
-    'Monsieur Lotfi BOUJENDAR',
+    'A l\'Attention de Monsieur Lotfi BOUJENDAR',
     58000,
     20,
     11600,
     0,
     69600,
-    'Soixante-Neuf Mille Six Cents Dirhams',
+    'Soixante Neuf Mille Six Cents Dirhams',
     'Virement bancaire',
     'paid',
     '',
     'manual',
-    '-30 day'
+    '-30 day',
+    'Note d\'honoraires',
+    'Arrêtée la Présente Note d\'honoraires à la somme de',
+    'Siham OUSAID',
+    1, 1, 1, 1, ''
   ).lastInsertRowid;
 
   insertItem.run(
@@ -383,14 +421,14 @@ function seedBillingDemoData(database: Database.Database) {
     0
   );
 
-  // Invoice 2: WASAL Sent (Unpaid)
+  // Invoice 2: WASAL (Corporate Marketplace - Note d'honoraires avec date de fin)
   const inv2Id = insertInvoice.run(
     'WASAL-F0002-2026',
     '2026-04-10',
     '2026-05-10',
     wasalId,
-    'Contrat cadre WASAL-FPA-2026',
-    'Madame Amina BENJELLOUN',
+    'Notre Contrat de services du 10 Février 2025',
+    'A l\'Attention de Madame Salwa IDRISSI ABOULAHJOUL',
     87500,
     20,
     17500,
@@ -401,13 +439,18 @@ function seedBillingDemoData(database: Database.Database) {
     'sent',
     '',
     'manual',
-    '-10 day'
+    '-10 day',
+    'Note d\'honoraires',
+    'Arrêté la présente facture à la somme de',
+    'Siham OUSAID',
+    1, 1, 1, 1,
+    'Date de finalisation des prestations:   Le 19 Juin 2025'
   ).lastInsertRowid;
 
   insertItem.run(
     inv2Id,
-    'Honoraires d\'accompagnement financier et fiscal pour le compte de WASAL SERVICES',
-    'Livrable Phase 1 - Rapport de diagnostic et cadrage stratégique',
+    'Mission d\'accompagnement pour la formalisation des schémas comptables, fiscaux, bancaires, et des processus opérationnels de gestion de la MarketPlace Wa-Sal',
+    'Pour solde de la mission - 17,5 JH de prestation',
     1,
     'forfait',
     87500,
@@ -415,14 +458,14 @@ function seedBillingDemoData(database: Database.Database) {
     0
   );
 
-  // Invoice 3: PAR3COM Draft
+  // Invoice 3: PAR3COM (PME - Supervision Mensuelle)
   const inv3Id = insertInvoice.run(
     'PAR3COM-F0003-2026',
     '2026-05-15',
     '2026-06-15',
     p3cId,
-    'BC n° 049/2026/PAR3COM',
-    'Monsieur Youssef TAZI',
+    'Notre Lettre de mission du 14 Février 2023',
+    'A l\'Attention de Madame Bouchra OUTAGHANI',
     6500,
     20,
     1300,
@@ -430,25 +473,101 @@ function seedBillingDemoData(database: Database.Database) {
     7800,
     'Sept Mille Huit Cents Dirhams',
     'Virement bancaire',
-    'draft',
+    'overdue',
     '',
     'manual',
-    '-2 day'
+    '-2 day',
+    'Note d\'honoraires',
+    'Arrêtée la Présente Note d\'honoraires à la somme de',
+    'Siham OUSAID',
+    1, 1, 1, 1, ''
   ).lastInsertRowid;
 
   insertItem.run(
     inv3Id,
-    'Formation aux normes comptables et financières',
-    'Session collective pour 5 participants de la direction financière',
+    'Mission de supervision des activités de gestion financière de votre société au titre de l\'exercice 2023',
+    'Abonnement mensuel - Juillet 2023',
     1,
     'forfait',
     6500,
     6500,
     0
   );
+
+  // Invoice 4: ALFA HOLDING (Conseil Juridique & Fiscal avec Débours)
+  const inv4Id = insertInvoice.run(
+    'ALFA-F0004-2026',
+    '2026-06-20',
+    '2026-07-20',
+    alfaId,
+    'Convention d\'assistance juridique et fiscale n° AJ-2026/04',
+    'A l\'Attention de Monsieur Mehdi ALAMI',
+    35000,
+    20,
+    7000,
+    4200,
+    46200,
+    'Quarante Six Mille Deux Cents Dirhams',
+    'Virement bancaire',
+    'sent',
+    '',
+    'manual',
+    '-5 day',
+    'Note d\'honoraires',
+    'Arrêtée la Présente Note d\'honoraires à la somme de',
+    'Siham OUSAID',
+    1, 1, 1, 1, ''
+  ).lastInsertRowid;
+
+  insertItem.run(
+    inv4Id,
+    'Prestation d\'assistance à la restructuration juridique et fiscale des filiales du groupe',
+    'Audit de conformité et formalisation des actes juridiques',
+    1,
+    'forfait',
+    35000,
+    35000,
+    0
+  );
+
+  // Invoice 5: INNOVATECH (Facture Standard - Prestation Technique IT)
+  const inv5Id = insertInvoice.run(
+    'INNO-F0005-2026',
+    '2026-07-01',
+    '2026-08-01',
+    innoId,
+    'Bon de commande n° BC-2026/899',
+    'A l\'Attention de Monsieur Karim BENCHEKROUN',
+    45000,
+    20,
+    9000,
+    0,
+    54000,
+    'Cinquante Quatre Mille Dirhams',
+    'Virement bancaire',
+    'draft',
+    '',
+    'manual',
+    '-1 day',
+    'Facture',
+    'Arrêté la présente facture à la somme de',
+    'Siham OUSAID',
+    1, 1, 1, 0, ''
+  ).lastInsertRowid;
+
+  insertItem.run(
+    inv5Id,
+    'Audit de sécurité et conformité du système d\'information financier',
+    'Cartographie des flux de trésorerie, tests d\'intrusion et plan de remédiation',
+    1,
+    'forfait',
+    45000,
+    45000,
+    0
+  );
   
-  // Set next seq to 4
-  database.prepare("UPDATE billing_settings SET value = '4' WHERE key = 'next_invoice_seq'").run();
+  // Set next seq to 6
+  database.prepare("UPDATE billing_settings SET value = '6' WHERE key = 'next_invoice_seq'").run();
 }
 
 function seedDefaults(database: Database.Database) {
@@ -666,6 +785,15 @@ function seedBillingDefaults(database: Database.Database) {
     ['company_logo_path', '/logo.png', 'company'],
     ['tva_legal_note', 'TVA payée sur les encaissements déductible au moment du règlement.', 'invoice'],
     ['payment_legal_note', 'Règlement à réception de facture.', 'invoice'],
+    ['invoice_default_type', "Note d'honoraires", 'invoice'],
+    ['invoice_closing_facture', 'Arrêté la présente facture à la somme de', 'invoice'],
+    ['coupon_title', 'A JOINDRE AU REGLEMENT', 'invoice'],
+    ['bank_order_of', 'Finance Pro Advisory', 'bank'],
+    ['pdf_show_watermark', 'true', 'display'],
+    ['pdf_watermark_opacity', '0.045', 'display'],
+    ['pdf_show_coupon', 'true', 'display'],
+    ['pdf_show_bank', 'true', 'display'],
+    ['pdf_show_debours', 'true', 'display'],
   ];
 
   for (const [key, value, category] of billingSettings) {

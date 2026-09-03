@@ -69,6 +69,16 @@ export interface Invoice {
   client_ice?: string;
   client_rc?: string;
   client_if_number?: string;
+  client_contact_person?: string;
+  client_contact_civility?: string;
+  document_type?: string;
+  closing_text?: string;
+  contact_name?: string;
+  show_coupon?: number | boolean;
+  show_watermark?: number | boolean;
+  show_bank_details?: number | boolean;
+  show_debours?: number | boolean;
+  service_date_text?: string;
   items?: InvoiceItem[];
 }
 
@@ -184,6 +194,8 @@ export function getInvoiceById(id: number) {
            bc.email as client_email, bc.phone as client_phone, bc.address as client_address,
            bc.city as client_city, bc.country as client_country, bc.ice as client_ice,
            bc.rc as client_rc, bc.if_number as client_if_number,
+           bc.contact_person as client_contact_person,
+           bc.contact_civility as client_contact_civility,
            bc.collections_client_id as collections_client_id
     FROM invoices i
     JOIN billing_clients bc ON i.client_id = bc.id
@@ -233,8 +245,10 @@ export function createInvoice(invoice: Omit<Invoice, 'id'>, items: Omit<InvoiceI
       INSERT INTO invoices (
         invoice_number, invoice_date, due_date, client_id, reference_text, salutation,
         subtotal_ht, tva_rate, tva_amount, disbursements, total_ttc, amount_in_words,
-        payment_terms, status, pdf_path, source_type, source_file_path, ai_extracted_data
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        payment_terms, status, pdf_path, source_type, source_file_path, ai_extracted_data,
+        document_type, closing_text, contact_name, show_coupon, show_watermark,
+        show_bank_details, show_debours, service_date_text
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(
       invoice.invoice_number,
       invoice.invoice_date,
@@ -253,7 +267,15 @@ export function createInvoice(invoice: Omit<Invoice, 'id'>, items: Omit<InvoiceI
       invoice.pdf_path || '',
       invoice.source_type || 'manual',
       invoice.source_file_path || '',
-      invoice.ai_extracted_data || '{}'
+      invoice.ai_extracted_data || '{}',
+      invoice.document_type || 'Note d\'honoraires',
+      invoice.closing_text || '',
+      invoice.contact_name || '',
+      invoice.show_coupon !== undefined ? (invoice.show_coupon ? 1 : 0) : 1,
+      invoice.show_watermark !== undefined ? (invoice.show_watermark ? 1 : 0) : 1,
+      invoice.show_bank_details !== undefined ? (invoice.show_bank_details ? 1 : 0) : 1,
+      invoice.show_debours !== undefined ? (invoice.show_debours ? 1 : 0) : 1,
+      invoice.service_date_text || ''
     );
     
     const invoiceId = Number(res.lastInsertRowid);

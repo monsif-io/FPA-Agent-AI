@@ -1,0 +1,929 @@
+{
+  "service_info": {
+    "autoDeploy": "yes",
+    "autoDeployTrigger": "commit",
+    "branch": "main",
+    "createdAt": "2026-06-19T02:42:18.212761Z",
+    "dashboardUrl": "https://dashboard.render.com/web/srv-d8qap2b7uimc73ahq22g",
+    "id": "srv-d8qap2b7uimc73ahq22g",
+    "name": "fpa-agent-ai",
+    "notifyOnFail": "default",
+    "ownerId": "tea-d8qam8dckfvc73e1mtdg",
+    "repo": "https://github.com/monsif-io/FPA-Agent-AI",
+    "rootDir": "FPA-Agent-Al",
+    "serviceDetails": {
+      "buildPlan": "starter",
+      "cache": {
+        "profile": "no-cache"
+      },
+      "env": "node",
+      "envSpecificDetails": {
+        "buildCommand": "npm install && npm run build",
+        "startCommand": "npm run start"
+      },
+      "healthCheckPath": "",
+      "ipAllowList": [
+        {
+          "cidrBlock": "0.0.0.0/0",
+          "description": "everywhere"
+        }
+      ],
+      "maintenanceMode": {
+        "enabled": false,
+        "uri": ""
+      },
+      "numInstances": 1,
+      "openPorts": [],
+      "plan": "free",
+      "previews": {
+        "generation": "off"
+      },
+      "pullRequestPreviewsEnabled": "no",
+      "region": "oregon",
+      "runtime": "node",
+      "sshAddress": "srv-d8qap2b7uimc73ahq22g@ssh.oregon.render.com",
+      "url": "https://fpa-collections-agent.onrender.com"
+    },
+    "slug": "fpa-collections-agent",
+    "suspended": "not_suspended",
+    "suspenders": [],
+    "type": "web_service",
+    "updatedAt": "2026-07-14T02:50:34.585613Z"
+  },
+  "owners": [
+    {
+      "cursor": "JE291D7E_FJtOGRja2Z2YzczZTFtdGRn",
+      "owner": {
+        "email": "sarahaitkabaj@gmail.com",
+        "id": "tea-d8qam8dckfvc73e1mtdg",
+        "name": "Sarah's workspace",
+        "type": "team"
+      }
+    }
+  ],
+  "env_vars": [
+    {
+      "envVar": {
+        "key": "DATABASE_PATH",
+        "value": "./data/fpa.db"
+      },
+      "cursor": "43gZyncQmRR2MWxhZWV0czczOW9lNnRn"
+    },
+    {
+      "envVar": {
+        "key": "NEXTAUTH_URL",
+        "value": "https://fpa-agent-ai.onrender.com"
+      },
+      "cursor": "43gZyncQmRR2MWxhZWV0czczOW9lNnQw"
+    },
+    {
+      "envVar": {
+        "key": "NEXTAUTH_SECRET",
+        "value": "fpa-collections-agent-secret-key-2026-xk9m2p"
+      },
+      "cursor": "43gZyncQmRR2MWxhZWV0czczOW9lNnNn"
+    },
+    {
+      "envVar": {
+        "key": "ADMIN_PASSWORD",
+        "value": "FPA@Collect2026!"
+      },
+      "cursor": "43gZyncQmRR2MWxhZWV0czczOW9lNnMw"
+    },
+    {
+      "envVar": {
+        "key": "ADMIN_USERNAME",
+        "value": "fpa_admin"
+      },
+      "cursor": "43gZyncQmRR2MWxhZWV0czczOW9lNnJn"
+    },
+    {
+      "envVar": {
+        "key": "SMTP_HOST",
+        "value": "mail.alfa-01.com"
+      },
+      "cursor": "43gZyncQmRR2MWxhZWV0czczOW9lNnIw"
+    },
+    {
+      "envVar": {
+        "key": "SMTP_PORT",
+        "value": "587"
+      },
+      "cursor": "43gZyncQmRR2MWxhZWV0czczOW9lNnFn"
+    },
+    {
+      "envVar": {
+        "key": "SMTP_USER",
+        "value": "sarah@alfa-01.com"
+      },
+      "cursor": "43gZyncQmRR2MWxhZWV0czczOW9lNnEw"
+    },
+    {
+      "envVar": {
+        "key": "SMTP_PASS",
+        "value": "Js1F9bP97vtR"
+      },
+      "cursor": "43gZyncQmRR2MWxhZWV0czczOW9lNnBn"
+    },
+    {
+      "envVar": {
+        "key": "SMTP_FROM",
+        "value": "sarah@alfa-01.com"
+      },
+      "cursor": "43gZyncQmRR2MWxhZWV0czczOW9lNnAw"
+    },
+    {
+      "envVar": {
+        "key": "SMTP_SECURE",
+        "value": "false"
+      },
+      "cursor": "43gZyncQmRR2MWxhZWV0czczOW9lNm8w"
+    },
+    {
+      "envVar": {
+        "key": "IMAP_HOST",
+        "value": "mail.alfa-01.com"
+      },
+      "cursor": "43gZyncQmRR2MWxhZWV0czczOW9lNm5n"
+    },
+    {
+      "envVar": {
+        "key": "IMAP_PORT",
+        "value": "993"
+      },
+      "cursor": "43gZyncQmRR2MWxhZWV0czczOW9lNm4w"
+    },
+    {
+      "envVar": {
+        "key": "IMAP_USER",
+        "value": "sarah@alfa-01.com"
+      },
+      "cursor": "43gZyncQmRR2MWxhZWV0czczOW9lNm1n"
+    },
+    {
+      "envVar": {
+        "key": "IMAP_PASS",
+        "value": "Js1F9bP97vtR"
+      },
+      "cursor": "43gZyncQmRR2MWxhZWV0czczOW9lNm0w"
+    },
+    {
+      "envVar": {
+        "key": "TELEGRAM_BOT_TOKEN",
+        "value": "8785971609:AAFdEBG3jV9F0RVXqFm12u-ddq-OlTK76Rk"
+      },
+      "cursor": "43gZyncQmRR2MWxhZWV0czczOW9lNmxn"
+    },
+    {
+      "envVar": {
+        "key": "OPENROUTER_API_KEY",
+        "value": "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"
+      },
+      "cursor": "43gZyncQmRR2MWxhZWV0czczOW9lNmww"
+    },
+    {
+      "envVar": {
+        "key": "OPENROUTER_MODEL",
+        "value": "google/gemini-2.5-flash"
+      },
+      "cursor": "43gZyncQmRR2MWxhZWV0czczOW9lNmtn"
+    },
+    {
+      "envVar": {
+        "key": "ADMIN_EMAIL",
+        "value": "sarah@alfa-01.com"
+      },
+      "cursor": "43gZyncQmRR2MWxhZWV0czczOW9lNmsw"
+    },
+    {
+      "envVar": {
+        "key": "APP_TIMEZONE",
+        "value": "Africa/Casablanca"
+      },
+      "cursor": "43gZyncQmRR2MWxhZWV0czczOW9lNmpn"
+    }
+  ],
+  "deploys": [
+    {
+      "deploy": {
+        "id": "dep-d9aq745aeets739oqi5g",
+        "commit": {
+          "id": "dcb7279747fe8ea63c7632f457d3716275dec6a0",
+          "message": "feat: Billing Agent integration and fixes with seed data",
+          "createdAt": "2026-07-14T02:30:35Z"
+        },
+        "status": "live",
+        "trigger": "manual",
+        "createdAt": "2026-07-14T02:48:48.856825Z",
+        "updatedAt": "2026-08-03T01:00:36.442956Z",
+        "startedAt": "2026-07-14T02:48:48.822682Z",
+        "finishedAt": "2026-07-14T02:50:34.58403Z"
+      },
+      "cursor": "zP0QOBzep9k3NDVhZWV0czczOW9xaTVn"
+    },
+    {
+      "deploy": {
+        "id": "dep-d9a22kr7uimc73fal5c0",
+        "commit": {
+          "id": "2de7e984208d930546f0e6f7d0487cf9d5744429",
+          "message": "chore: remove temporary backup route",
+          "createdAt": "2026-07-12T23:20:49Z"
+        },
+        "status": "build_failed",
+        "trigger": "new_commit",
+        "createdAt": "2026-07-12T23:20:51.549002Z",
+        "updatedAt": "2026-07-14T02:30:52.031977Z",
+        "startedAt": "2026-07-12T23:20:51.512954Z",
+        "finishedAt": "2026-07-12T23:21:49.79164Z"
+      },
+      "cursor": "mOQ-8XOhu24ya3I3dWltYzczZmFsNWMw"
+    },
+    {
+      "deploy": {
+        "id": "dep-d9a21jb7uimc73fakiu0",
+        "commit": {
+          "id": "86d1fc398ff4b2c984ca3687a4390fd90c442968",
+          "message": "feat: add temporary secure backup route for pulling DB",
+          "createdAt": "2026-07-12T23:18:35Z"
+        },
+        "status": "build_failed",
+        "trigger": "new_commit",
+        "createdAt": "2026-07-12T23:18:37.948938Z",
+        "updatedAt": "2026-07-12T23:19:18.688786Z",
+        "startedAt": "2026-07-12T23:18:37.916446Z",
+        "finishedAt": "2026-07-12T23:19:18.687943Z"
+      },
+      "cursor": "mOQ-8XOhu24xamI3dWltYzczZmFraXUw"
+    },
+    {
+      "deploy": {
+        "id": "dep-d8qbc577f7vs73fp6b20",
+        "commit": {
+          "id": "d61b77fc02641a1955d78ab31c8995cec9bc3b84",
+          "message": "feat: add runNow parameter to schedules API to force scheduler runs in testing",
+          "createdAt": "2026-06-19T03:22:57Z"
+        },
+        "status": "deactivated",
+        "trigger": "new_commit",
+        "createdAt": "2026-06-19T03:23:00.185404Z",
+        "updatedAt": "2026-07-14T02:50:34.5832Z",
+        "startedAt": "2026-06-19T03:23:00.14448Z",
+        "finishedAt": "2026-06-19T03:24:17.641691Z"
+      },
+      "cursor": "SnNrVd0khCtjNTc3Zjd2czczZnA2YjIw"
+    },
+    {
+      "deploy": {
+        "id": "dep-d8qb4uf7f7vs73e378e0",
+        "commit": {
+          "id": "bfa86dba6e7b5ae385415b42e78fc4c0b56f7eb6",
+          "message": "feat: migrate email sending to Brevo HTTP API and update settings UI",
+          "createdAt": "2026-06-19T03:05:30Z"
+        },
+        "status": "deactivated",
+        "trigger": "api",
+        "createdAt": "2026-06-19T03:07:37.338673Z",
+        "updatedAt": "2026-06-19T03:24:17.640705Z",
+        "startedAt": "2026-06-19T03:07:37.299961Z",
+        "finishedAt": "2026-06-19T03:08:55.422847Z"
+      },
+      "cursor": "SnNrVd0khCs0dWY3Zjd2czczZTM3OGUw"
+    },
+    {
+      "deploy": {
+        "id": "dep-d8qb3vbtqb8s73a3li30",
+        "commit": {
+          "id": "bfa86dba6e7b5ae385415b42e78fc4c0b56f7eb6",
+          "message": "feat: migrate email sending to Brevo HTTP API and update settings UI",
+          "createdAt": "2026-06-19T03:05:30Z"
+        },
+        "status": "deactivated",
+        "trigger": "new_commit",
+        "createdAt": "2026-06-19T03:05:33.989224Z",
+        "updatedAt": "2026-06-19T03:08:55.421827Z",
+        "startedAt": "2026-06-19T03:05:33.906514Z",
+        "finishedAt": "2026-06-19T03:06:53.100216Z"
+      },
+      "cursor": "SnNrVd0khCszdmJ0cWI4czczYTNsaTMw"
+    },
+    {
+      "deploy": {
+        "id": "dep-d8qap2r7uimc73ahq2o0",
+        "commit": {
+          "id": "f225537f3a99a68473350914403f303bdbd315a6",
+          "message": "chore: rename deploy script to deploy.sh",
+          "createdAt": "2026-06-19T02:42:13Z"
+        },
+        "status": "deactivated",
+        "trigger": "manual",
+        "createdAt": "2026-06-19T02:42:19.203458Z",
+        "updatedAt": "2026-06-19T03:06:53.099189Z",
+        "startedAt": "2026-06-19T02:42:19.19653Z",
+        "finishedAt": "2026-06-19T02:43:36.34269Z"
+      },
+      "cursor": "JUD40Rh-hwdwMnI3dWltYzczYWhxMm8w"
+    }
+  ],
+  "events": [
+    {
+      "event": {
+        "details": {
+          "deployId": "dep-d9aq745aeets739oqi5g",
+          "deployStatus": "succeeded",
+          "reason": {},
+          "status": 2
+        },
+        "id": "evt-d9aq7uil7j9c738vpehg",
+        "serviceId": "srv-d8qap2b7uimc73ahq22g",
+        "timestamp": "2026-07-14T02:50:34.684044Z",
+        "type": "deploy_ended"
+      },
+      "cursor": "pWn_voxhXNs3dWlsN2o5YzczOHZwZWhn"
+    },
+    {
+      "event": {
+        "details": {
+          "buildId": "bld-d9aq745aeets739oqi60",
+          "buildStatus": "succeeded",
+          "reason": {},
+          "status": 2
+        },
+        "id": "evt-d9aq7kal7j9c738vp4pg",
+        "serviceId": "srv-d8qap2b7uimc73ahq22g",
+        "timestamp": "2026-07-14T02:49:50Z",
+        "type": "build_ended"
+      },
+      "cursor": "pWn_voxhXNs3a2FsN2o5YzczOHZwNHBn"
+    },
+    {
+      "event": {
+        "details": {
+          "deployId": "dep-d9aq745aeets739oqi5g",
+          "trigger": {
+            "clearCache": false,
+            "deployedByRender": false,
+            "envUpdated": false,
+            "firstBuild": false,
+            "manual": true,
+            "rollback": false,
+            "user": {
+              "email": "sarahaitkabaj@gmail.com",
+              "id": "usr-d8qam8dckfvc73e1mtg0"
+            }
+          }
+        },
+        "id": "evt-d9aq748ddkuc73dkome0",
+        "serviceId": "srv-d8qap2b7uimc73ahq22g",
+        "timestamp": "2026-07-14T02:48:49.098547Z",
+        "type": "deploy_started"
+      },
+      "cursor": "pWn_voxhXNs3NDhkZGt1YzczZGtvbWUw"
+    },
+    {
+      "event": {
+        "details": {
+          "buildId": "bld-d9aq745aeets739oqi60",
+          "trigger": {
+            "clearCache": false,
+            "deployedByRender": false,
+            "envUpdated": false,
+            "firstBuild": false,
+            "manual": true,
+            "rollback": false,
+            "user": {
+              "email": "sarahaitkabaj@gmail.com",
+              "id": "usr-d8qam8dckfvc73e1mtg0"
+            }
+          }
+        },
+        "id": "evt-d9aq74gddkuc73dkomk0",
+        "serviceId": "srv-d8qap2b7uimc73ahq22g",
+        "timestamp": "2026-07-14T02:48:49.059928Z",
+        "type": "build_started"
+      },
+      "cursor": "pWn_voxhXNs3NGdkZGt1YzczZGtvbWsw"
+    },
+    {
+      "event": {
+        "details": {},
+        "id": "evt-d9apv2u7r5hc7398le3g",
+        "serviceId": "srv-d8qap2b7uimc73ahq22g",
+        "timestamp": "2026-07-14T02:31:39.558373Z",
+        "type": "service_resumed"
+      },
+      "cursor": "ccWifWZYA_R2MnU3cjVoYzczOThsZTNn"
+    },
+    {
+      "event": {
+        "details": {
+          "actor": "User",
+          "resumedByUser": {
+            "email": "sarahaitkabaj@gmail.com",
+            "id": "usr-d8qam8dckfvc73e1mtg0"
+          }
+        },
+        "id": "evt-d9apv2u7r5hc7398le20",
+        "serviceId": "srv-d8qap2b7uimc73ahq22g",
+        "timestamp": "2026-07-14T02:31:39.558373Z",
+        "type": "suspender_removed"
+      },
+      "cursor": "ccWifWZYA_R2MnU3cjVoYzczOThsZTIw"
+    },
+    {
+      "event": {
+        "details": {},
+        "id": "evt-d9apumrtqb8s739o27m0",
+        "serviceId": "srv-d8qap2b7uimc73ahq22g",
+        "timestamp": "2026-07-14T02:30:51.826401Z",
+        "type": "service_suspended"
+      },
+      "cursor": "ccWifWZYA_R1bXJ0cWI4czczOW8yN20w"
+    },
+    {
+      "event": {
+        "details": {
+          "actor": "User",
+          "suspendedByUser": {
+            "email": "sarahaitkabaj@gmail.com",
+            "id": "usr-d8qam8dckfvc73e1mtg0"
+          }
+        },
+        "id": "evt-d9apumrtqb8s739o27lg",
+        "serviceId": "srv-d8qap2b7uimc73ahq22g",
+        "timestamp": "2026-07-14T02:30:51.826401Z",
+        "type": "suspender_added"
+      },
+      "cursor": "ccWifWZYA_R1bXJ0cWI4czczOW8yN2xn"
+    },
+    {
+      "event": {
+        "details": {
+          "deployId": "dep-d9a22kr7uimc73fal5c0",
+          "deployStatus": "failed",
+          "reason": {
+            "buildFailed": {
+              "id": "Exited with status 1"
+            },
+            "failure": {
+              "evicted": false,
+              "nonZeroExit": 1
+            }
+          },
+          "status": 4
+        },
+        "id": "evt-d9a233e9n3os739svo80",
+        "serviceId": "srv-d8qap2b7uimc73ahq22g",
+        "timestamp": "2026-07-12T23:21:49.821345Z",
+        "type": "deploy_ended"
+      },
+      "cursor": "8VAbEvvMVbIzM2U5bjNvczczOXN2bzgw"
+    },
+    {
+      "event": {
+        "details": {
+          "buildId": "bld-d9a22kr7uimc73fal5cg",
+          "buildStatus": "failed",
+          "reason": {
+            "buildFailed": {
+              "id": "bld-d9a22kr7uimc73fal5cg"
+            },
+            "failure": {
+              "evicted": false,
+              "nonZeroExit": 1
+            }
+          },
+          "status": 3
+        },
+        "id": "evt-d9a233as87ks73a1qurg",
+        "serviceId": "srv-d8qap2b7uimc73ahq22g",
+        "timestamp": "2026-07-12T23:21:48Z",
+        "type": "build_ended"
+      },
+      "cursor": "8VAbEvvMVbIzM2FzODdrczczYTFxdXJn"
+    },
+    {
+      "event": {
+        "details": {
+          "buildId": "bld-d9a22kr7uimc73fal5cg",
+          "trigger": {
+            "clearCache": false,
+            "deployedByRender": false,
+            "envUpdated": false,
+            "firstBuild": false,
+            "manual": false,
+            "newCommit": "2de7e984208d930546f0e6f7d0487cf9d5744429",
+            "rollback": false
+          }
+        },
+        "id": "evt-d9a22l3f53mc73cvduug",
+        "serviceId": "srv-d8qap2b7uimc73ahq22g",
+        "timestamp": "2026-07-12T23:20:51.808209Z",
+        "type": "build_started"
+      },
+      "cursor": "8VAbEvvMVbIybDNmNTNtYzczY3ZkdXVn"
+    },
+    {
+      "event": {
+        "details": {
+          "deployId": "dep-d9a22kr7uimc73fal5c0",
+          "trigger": {
+            "clearCache": false,
+            "deployedByRender": false,
+            "envUpdated": false,
+            "firstBuild": false,
+            "manual": false,
+            "newCommit": "2de7e984208d930546f0e6f7d0487cf9d5744429",
+            "rollback": false
+          }
+        },
+        "id": "evt-d9a22kq8c8gc73c0dcv0",
+        "serviceId": "srv-d8qap2b7uimc73ahq22g",
+        "timestamp": "2026-07-12T23:20:51.794446Z",
+        "type": "deploy_started"
+      },
+      "cursor": "8VAbEvvMVbIya3E4YzhnYzczYzBkY3Yw"
+    },
+    {
+      "event": {
+        "details": {
+          "deployId": "dep-d9a21jb7uimc73fakiu0",
+          "deployStatus": "failed",
+          "reason": {
+            "buildFailed": {
+              "id": "Exited with status 1"
+            },
+            "failure": {
+              "evicted": false,
+              "nonZeroExit": 1
+            }
+          },
+          "status": 4
+        },
+        "id": "evt-d9a21tm9n3os739suuig",
+        "serviceId": "srv-d8qap2b7uimc73ahq22g",
+        "timestamp": "2026-07-12T23:19:18.727758Z",
+        "type": "deploy_ended"
+      },
+      "cursor": "8VAbEvvMVbIxdG05bjNvczczOXN1dWln"
+    },
+    {
+      "event": {
+        "details": {
+          "buildId": "bld-d9a21jb7uimc73fakiug",
+          "buildStatus": "failed",
+          "reason": {
+            "buildFailed": {
+              "id": "bld-d9a21jb7uimc73fakiug"
+            },
+            "failure": {
+              "evicted": false,
+              "nonZeroExit": 1
+            }
+          },
+          "status": 3
+        },
+        "id": "evt-d9a21tm9n3os739suufg",
+        "serviceId": "srv-d8qap2b7uimc73ahq22g",
+        "timestamp": "2026-07-12T23:19:17Z",
+        "type": "build_ended"
+      },
+      "cursor": "8VAbEvvMVbIxdG05bjNvczczOXN1dWZn"
+    },
+    {
+      "event": {
+        "details": {
+          "deployId": "dep-d9a21jb7uimc73fakiu0",
+          "trigger": {
+            "clearCache": false,
+            "deployedByRender": false,
+            "envUpdated": false,
+            "firstBuild": false,
+            "manual": false,
+            "newCommit": "86d1fc398ff4b2c984ca3687a4390fd90c442968",
+            "rollback": false
+          }
+        },
+        "id": "evt-d9a21ji8c8gc73c0coeg",
+        "serviceId": "srv-d8qap2b7uimc73ahq22g",
+        "timestamp": "2026-07-12T23:18:38.156208Z",
+        "type": "deploy_started"
+      },
+      "cursor": "8VAbEvvMVbIxamk4YzhnYzczYzBjb2Vn"
+    },
+    {
+      "event": {
+        "details": {
+          "buildId": "bld-d9a21jb7uimc73fakiug",
+          "trigger": {
+            "clearCache": false,
+            "deployedByRender": false,
+            "envUpdated": false,
+            "firstBuild": false,
+            "manual": false,
+            "newCommit": "86d1fc398ff4b2c984ca3687a4390fd90c442968",
+            "rollback": false
+          }
+        },
+        "id": "evt-d9a21jjgusns73c859lg",
+        "serviceId": "srv-d8qap2b7uimc73ahq22g",
+        "timestamp": "2026-07-12T23:18:38.148713Z",
+        "type": "build_started"
+      },
+      "cursor": "8VAbEvvMVbIxampndXNuczczYzg1OWxn"
+    },
+    {
+      "event": {
+        "details": {
+          "deployId": "dep-d8qbc577f7vs73fp6b20",
+          "deployStatus": "succeeded",
+          "reason": {},
+          "status": 2
+        },
+        "id": "evt-d8qbcoeamnac73c7tq20",
+        "serviceId": "srv-d8qap2b7uimc73ahq22g",
+        "timestamp": "2026-06-19T03:24:17.749895Z",
+        "type": "deploy_ended"
+      },
+      "cursor": "U3tWAN21IORjb2VhbW5hYzczYzd0cTIw"
+    },
+    {
+      "event": {
+        "details": {
+          "buildId": "bld-d8qbc577f7vs73fp6b2g",
+          "buildStatus": "succeeded",
+          "reason": {},
+          "status": 2
+        },
+        "id": "evt-d8qbcglvs73c739adfig",
+        "serviceId": "srv-d8qap2b7uimc73ahq22g",
+        "timestamp": "2026-06-19T03:23:44Z",
+        "type": "build_ended"
+      },
+      "cursor": "U3tWAN21IORjZ2x2czczYzczOWFkZmln"
+    },
+    {
+      "event": {
+        "details": {
+          "deployId": "dep-d8qbc577f7vs73fp6b20",
+          "trigger": {
+            "clearCache": false,
+            "deployedByRender": false,
+            "envUpdated": false,
+            "firstBuild": false,
+            "manual": false,
+            "newCommit": "d61b77fc02641a1955d78ab31c8995cec9bc3b84",
+            "rollback": false
+          }
+        },
+        "id": "evt-d8qbc55vs73c739ad900",
+        "serviceId": "srv-d8qap2b7uimc73ahq22g",
+        "timestamp": "2026-06-19T03:23:00.446655Z",
+        "type": "deploy_started"
+      },
+      "cursor": "U3tWAN21IORjNTV2czczYzczOWFkOTAw"
+    },
+    {
+      "event": {
+        "details": {
+          "buildId": "bld-d8qbc577f7vs73fp6b2g",
+          "trigger": {
+            "clearCache": false,
+            "deployedByRender": false,
+            "envUpdated": false,
+            "firstBuild": false,
+            "manual": false,
+            "newCommit": "d61b77fc02641a1955d78ab31c8995cec9bc3b84",
+            "rollback": false
+          }
+        },
+        "id": "evt-d8qbc5chr8fs73a90ceg",
+        "serviceId": "srv-d8qap2b7uimc73ahq22g",
+        "timestamp": "2026-06-19T03:23:00.405197Z",
+        "type": "build_started"
+      },
+      "cursor": "U3tWAN21IORjNWNocjhmczczYTkwY2Vn"
+    },
+    {
+      "event": {
+        "details": {
+          "deployId": "dep-d8qb4uf7f7vs73e378e0",
+          "deployStatus": "succeeded",
+          "reason": {},
+          "status": 2
+        },
+        "id": "evt-d8qb5huujckc73cbdsa0",
+        "serviceId": "srv-d8qap2b7uimc73ahq22g",
+        "timestamp": "2026-06-19T03:08:55.520072Z",
+        "type": "deploy_ended"
+      },
+      "cursor": "U3tWAN21IOQ1aHV1amNrYzczY2Jkc2Ew"
+    },
+    {
+      "event": {
+        "details": {
+          "buildId": "bld-d8qb4uf7f7vs73e378eg",
+          "buildStatus": "succeeded",
+          "reason": {},
+          "status": 2
+        },
+        "id": "evt-d8qb59shr8fs73a8squ0",
+        "serviceId": "srv-d8qap2b7uimc73ahq22g",
+        "timestamp": "2026-06-19T03:08:21Z",
+        "type": "build_ended"
+      },
+      "cursor": "U3tWAN21IOQ1OXNocjhmczczYThzcXUw"
+    },
+    {
+      "event": {
+        "details": {
+          "deployId": "dep-d8qb4uf7f7vs73e378e0",
+          "trigger": {
+            "clearCache": false,
+            "deployedByRender": false,
+            "envUpdated": false,
+            "firstBuild": false,
+            "manual": false,
+            "rollback": false,
+            "user": {
+              "email": "sarahaitkabaj@gmail.com",
+              "id": "usr-d8qam8dckfvc73e1mtg0"
+            }
+          }
+        },
+        "id": "evt-d8qb4uchr8fs73a8sm5g",
+        "serviceId": "srv-d8qap2b7uimc73ahq22g",
+        "timestamp": "2026-06-19T03:07:37.625155Z",
+        "type": "deploy_started"
+      },
+      "cursor": "U3tWAN21IOQ0dWNocjhmczczYThzbTVn"
+    },
+    {
+      "event": {
+        "details": {
+          "buildId": "bld-d8qb4uf7f7vs73e378eg",
+          "trigger": {
+            "clearCache": false,
+            "deployedByRender": false,
+            "envUpdated": false,
+            "firstBuild": false,
+            "manual": false,
+            "rollback": false,
+            "user": {
+              "email": "sarahaitkabaj@gmail.com",
+              "id": "usr-d8qam8dckfvc73e1mtg0"
+            }
+          }
+        },
+        "id": "evt-d8qb4ulvs73c739a9k8g",
+        "serviceId": "srv-d8qap2b7uimc73ahq22g",
+        "timestamp": "2026-06-19T03:07:37.595657Z",
+        "type": "build_started"
+      },
+      "cursor": "U3tWAN21IOQ0dWx2czczYzczOWE5azhn"
+    },
+    {
+      "event": {
+        "details": {
+          "deployId": "dep-d8qb3vbtqb8s73a3li30",
+          "deployStatus": "succeeded",
+          "reason": {},
+          "status": 2
+        },
+        "id": "evt-d8qb4jeamnac73c7pkk0",
+        "serviceId": "srv-d8qap2b7uimc73ahq22g",
+        "timestamp": "2026-06-19T03:06:53.232216Z",
+        "type": "deploy_ended"
+      },
+      "cursor": "U3tWAN21IOQ0amVhbW5hYzczYzdwa2sw"
+    },
+    {
+      "event": {
+        "details": {
+          "buildId": "bld-d8qb3vbtqb8s73a3li40",
+          "buildStatus": "succeeded",
+          "reason": {},
+          "status": 2
+        },
+        "id": "evt-d8qb4beamnac73c7pgpg",
+        "serviceId": "srv-d8qap2b7uimc73ahq22g",
+        "timestamp": "2026-06-19T03:06:19Z",
+        "type": "build_ended"
+      },
+      "cursor": "U3tWAN21IOQ0YmVhbW5hYzczYzdwZ3Bn"
+    },
+    {
+      "event": {
+        "details": {
+          "deployId": "dep-d8qb3vbtqb8s73a3li30",
+          "trigger": {
+            "clearCache": false,
+            "deployedByRender": false,
+            "envUpdated": false,
+            "firstBuild": false,
+            "manual": false,
+            "newCommit": "bfa86dba6e7b5ae385415b42e78fc4c0b56f7eb6",
+            "rollback": false
+          }
+        },
+        "id": "evt-d8qb3vlnulbc73a7gocg",
+        "serviceId": "srv-d8qap2b7uimc73ahq22g",
+        "timestamp": "2026-06-19T03:05:34.591402Z",
+        "type": "deploy_started"
+      },
+      "cursor": "U3tWAN21IOQzdmxudWxiYzczYTdnb2Nn"
+    },
+    {
+      "event": {
+        "details": {
+          "buildId": "bld-d8qb3vbtqb8s73a3li40",
+          "trigger": {
+            "clearCache": false,
+            "deployedByRender": false,
+            "envUpdated": false,
+            "firstBuild": false,
+            "manual": false,
+            "newCommit": "bfa86dba6e7b5ae385415b42e78fc4c0b56f7eb6",
+            "rollback": false
+          }
+        },
+        "id": "evt-d8qb406ulm6s73aaubb0",
+        "serviceId": "srv-d8qap2b7uimc73ahq22g",
+        "timestamp": "2026-06-19T03:05:34.575251Z",
+        "type": "build_started"
+      },
+      "cursor": "U3tWAN21IOQ0MDZ1bG02czczYWF1YmIw"
+    },
+    {
+      "event": {
+        "details": {
+          "deployId": "dep-d8qap2r7uimc73ahq2o0",
+          "deployStatus": "succeeded",
+          "reason": {},
+          "status": 2
+        },
+        "id": "evt-d8qapm6ujckc73cb7jn0",
+        "serviceId": "srv-d8qap2b7uimc73ahq22g",
+        "timestamp": "2026-06-19T02:43:36.489507Z",
+        "type": "deploy_ended"
+      },
+      "cursor": "iZ0ULTyFHNFwbTZ1amNrYzczY2I3am4w"
+    },
+    {
+      "event": {
+        "details": {
+          "buildId": "bld-d8qap2r7uimc73ahq2og",
+          "buildStatus": "succeeded",
+          "reason": {},
+          "status": 2
+        },
+        "id": "evt-d8qape6ulm6s73aaojig",
+        "serviceId": "srv-d8qap2b7uimc73ahq22g",
+        "timestamp": "2026-06-19T02:43:02Z",
+        "type": "build_ended"
+      },
+      "cursor": "iZ0ULTyFHNFwZTZ1bG02czczYWFvamln"
+    },
+    {
+      "event": {
+        "details": {
+          "deployId": "dep-d8qap2r7uimc73ahq2o0",
+          "trigger": {
+            "clearCache": false,
+            "deployedByRender": false,
+            "envUpdated": false,
+            "firstBuild": true,
+            "manual": false,
+            "rollback": false
+          }
+        },
+        "id": "evt-d8qap2tvs73c739a30k0",
+        "serviceId": "srv-d8qap2b7uimc73ahq22g",
+        "timestamp": "2026-06-19T02:42:19.467741Z",
+        "type": "deploy_started"
+      },
+      "cursor": "iZ0ULTyFHNFwMnR2czczYzczOWEzMGsw"
+    },
+    {
+      "event": {
+        "details": {
+          "buildId": "bld-d8qap2r7uimc73ahq2og",
+          "trigger": {
+            "clearCache": false,
+            "deployedByRender": false,
+            "envUpdated": false,
+            "firstBuild": true,
+            "manual": false,
+            "rollback": false
+          }
+        },
+        "id": "evt-d8qap35vs73c739a30p0",
+        "serviceId": "srv-d8qap2b7uimc73ahq22g",
+        "timestamp": "2026-06-19T02:42:19.449811Z",
+        "type": "build_started"
+      },
+      "cursor": "iZ0ULTyFHNFwMzV2czczYzczOWEzMHAw"
+    }
+  ],
+  "custom_domains": [],
+  "jobs": []
+}
