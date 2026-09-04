@@ -44,9 +44,51 @@ export default function InvoicesPage() {
   const [detailsLoading, setDetailsLoading] = useState(false);
   const [sendingEmail, setSendingEmail] = useState<number | null>(null);
   const [transferring, setTransferring] = useState<number | null>(null);
+  const [previewInvoice, setPreviewInvoice] = useState<Invoice | null>(null);
+  const [previewTab, setPreviewTab] = useState<'pdf' | 'summary'>('pdf');
+  const [pdfLoading, setPdfLoading] = useState(true);
 
   const { showToast } = useToast();
   const fetchedRef = useRef(false);
+
+  const handleOpenPreview = (invoice: Invoice, tab: 'pdf' | 'summary' = 'pdf') => {
+    setPreviewInvoice(invoice);
+    setPreviewTab(tab);
+    setPdfLoading(true);
+    if (!invoiceDetails || invoiceDetails.id !== invoice.id) {
+      fetchInvoiceDetails(invoice.id);
+    }
+  };
+
+  const handleClosePreview = () => {
+    setPreviewInvoice(null);
+  };
+
+  const handlePrintIframe = () => {
+    const frame = document.getElementById('preview-pdf-iframe') as HTMLIFrameElement;
+    if (frame && frame.contentWindow) {
+      try {
+        frame.contentWindow.focus();
+        frame.contentWindow.print();
+      } catch {
+        if (previewInvoice) {
+          window.open(`/api/billing/invoices/${previewInvoice.id}/pdf`, '_blank');
+        }
+      }
+    } else if (previewInvoice) {
+      window.open(`/api/billing/invoices/${previewInvoice.id}/pdf`, '_blank');
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setPreviewInvoice(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const fetchInvoices = useCallback(async () => {
     setLoading(true);
@@ -277,7 +319,7 @@ export default function InvoicesPage() {
                   <th>Date Émission</th>
                   <th>Montant TTC</th>
                   <th>Statut</th>
-                  <th style={{ textAlign: 'right' }}>Détails</th>
+                  <th style={{ textAlign: 'right', minWidth: '170px' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -285,6 +327,7 @@ export default function InvoicesPage() {
                   <tr
                     key={inv.id}
                     onClick={() => handleSelectInvoice(inv)}
+                    onDoubleClick={() => handleOpenPreview(inv)}
                     style={{ cursor: 'pointer', background: selectedInvoice?.id === inv.id ? 'var(--gold-50)' : 'transparent' }}
                   >
                     <td style={{ fontWeight: 600, color: 'var(--info)' }}>{inv.invoice_number}</td>
@@ -296,8 +339,31 @@ export default function InvoicesPage() {
                         {statusLabels[inv.status] || inv.status}
                       </span>
                     </td>
-                    <td style={{ textAlign: 'right', color: 'var(--gray-400)' }}>
-                      <i className="ph ph-caret-right"></i>
+                    <td style={{ textAlign: 'right' }}>
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', justifyContent: 'flex-end' }}>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenPreview(inv);
+                          }}
+                          className="invoice-action-chip preview"
+                          title="Visualiser la facture (Aperçu direct)"
+                        >
+                          <i className="ph ph-eye"></i> Aperçu
+                        </button>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDownloadPdf(inv.id);
+                          }}
+                          className="invoice-action-chip"
+                          title="Télécharger le PDF"
+                        >
+                          <i className="ph ph-download-simple"></i>
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -392,6 +458,15 @@ export default function InvoicesPage() {
                 {/* Operations actions */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}>
                   
+                  {/* Preview Invoice button */}
+                  <button
+                    onClick={() => handleOpenPreview(invoiceDetails)}
+                    className="billing-btn billing-btn-gold"
+                    style={{ width: '100%', justifyContent: 'center', boxShadow: '0 4px 14px rgba(197, 160, 61, 0.35)', fontWeight: 700 }}
+                  >
+                    <i className="ph ph-eye" style={{ fontSize: '1.15rem' }}></i> Visualiser la Facture (Aperçu)
+                  </button>
+
                   {/* Download PDF button */}
                   <button
                     onClick={() => handleDownloadPdf(invoiceDetails.id)}
@@ -463,6 +538,337 @@ export default function InvoicesPage() {
           </div>
         )}
       </div>
+
+      {/* ========================================================================= */}
+      {/* PROFESSIONAL INVOICE PREVIEW MODAL & VIEWER                               */}
+      {/* ========================================================================= */}
+      {previewInvoice && (() => {
+        const activeInvoice = (invoiceDetails && invoiceDetails.id === previewInvoice.id) ? invoiceDetails : previewInvoice;
+        return (
+          <div
+            className="invoice-modal-backdrop"
+            onClick={handleClosePreview}
+            role="dialog"
+            aria-modal="true"
+          >
+            <div
+              className="invoice-modal-container"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Modal Header */}
+              <div className="invoice-modal-header">
+                <div className="invoice-modal-header-left">
+                  <div className="invoice-modal-header-icon">
+                    <i className="ph ph-file-text"></i>
+                  </div>
+                  <div className="invoice-modal-header-title">
+                    <h3>
+                      <span>{activeInvoice.document_type || "Note d'honoraires"}</span>
+                      <span style={{ color: 'var(--gold-dark)', fontSize: '1.05rem' }}>{activeInvoice.invoice_number}</span>
+                      <span className={`invoice-status ${activeInvoice.status}`} style={{ fontSize: '0.72rem', verticalAlign: 'middle' }}>
+                        {statusLabels[activeInvoice.status] || activeInvoice.status}
+                      </span>
+                    </h3>
+                    <p>
+                      {activeInvoice.client_name} • Émise le {activeInvoice.invoice_date}
+                      {activeInvoice.due_date ? ` • Échéance: ${activeInvoice.due_date}` : ''}
+                    </p>
+                  </div>
+                </div>
+
+                {/* View Switcher Tabs */}
+                <div className="invoice-modal-tabs">
+                  <button
+                    type="button"
+                    onClick={() => setPreviewTab('pdf')}
+                    className={`invoice-modal-tab-btn ${previewTab === 'pdf' ? 'active' : ''}`}
+                  >
+                    <i className="ph ph-file-pdf"></i> Document PDF Officiel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPreviewTab('summary')}
+                    className={`invoice-modal-tab-btn ${previewTab === 'summary' ? 'active' : ''}`}
+                  >
+                    <i className="ph ph-squares-four"></i> Synthèse & Données
+                  </button>
+                </div>
+
+                {/* Header Action Tools */}
+                <div className="invoice-modal-actions">
+                  <button
+                    type="button"
+                    onClick={handlePrintIframe}
+                    className="invoice-modal-action-btn"
+                    title="Imprimer directement"
+                  >
+                    <i className="ph ph-printer"></i> Imprimer
+                  </button>
+
+                  <a
+                    href={`/api/billing/invoices/${activeInvoice.id}/pdf`}
+                    download={`${activeInvoice.invoice_number}.pdf`}
+                    className="invoice-modal-action-btn primary"
+                    title="Télécharger le fichier PDF original"
+                  >
+                    <i className="ph ph-download-simple"></i> Télécharger
+                  </a>
+
+                  <a
+                    href={`/api/billing/invoices/${activeInvoice.id}/pdf`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="invoice-modal-action-btn"
+                    title="Ouvrir en plein écran dans un nouvel onglet"
+                  >
+                    <i className="ph ph-arrow-square-out"></i> Plein écran
+                  </a>
+
+                  <button
+                    type="button"
+                    onClick={handleClosePreview}
+                    className="invoice-modal-close-btn"
+                    title="Fermer la vue (Échap)"
+                  >
+                    <i className="ph ph-x"></i>
+                  </button>
+                </div>
+              </div>
+
+              {/* Modal Body */}
+              <div className="invoice-modal-body">
+                {previewTab === 'pdf' ? (
+                  <div className="invoice-pdf-frame-wrapper">
+                    {pdfLoading && (
+                      <div style={{
+                        position: 'absolute',
+                        inset: 0,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        background: '#ffffff',
+                        zIndex: 2,
+                        gap: '1rem',
+                      }}>
+                        <div className="spinner" style={{ width: '40px', height: '40px' }}></div>
+                        <p style={{ color: 'var(--gray-600)', fontSize: '0.9rem', fontWeight: 500 }}>
+                          Génération et rendu du document certifié FPA...
+                        </p>
+                      </div>
+                    )}
+                    <iframe
+                      id="preview-pdf-iframe"
+                      src={`/api/billing/invoices/${activeInvoice.id}/pdf#toolbar=1&navpanes=0&view=FitH`}
+                      className="invoice-pdf-frame"
+                      onLoad={() => setPdfLoading(false)}
+                      title={`Aperçu PDF de la facture ${activeInvoice.invoice_number}`}
+                    />
+                  </div>
+                ) : (
+                  /* Structured Financial & Prestations Breakdown */
+                  <div className="invoice-modal-summary-view">
+                    <div style={{ maxWidth: '840px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                      
+                      {/* Top Identity & Client Card */}
+                      <div style={{ background: '#fff', borderRadius: 'var(--radius-md)', border: '1px solid var(--gray-200)', padding: '1.5rem', boxShadow: 'var(--shadow-sm)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid var(--gray-100)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                          <div>
+                            <div style={{ fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--gold-dark)', fontWeight: 700 }}>
+                              Émetteur
+                            </div>
+                            <div style={{ fontWeight: 700, fontSize: '1.05rem', color: 'var(--anthracite)' }}>
+                              FPA Cabinet d'Avocats & Recouvrement
+                            </div>
+                            <div style={{ fontSize: '0.82rem', color: 'var(--gray-500)', marginTop: '0.2rem' }}>
+                              Boulevard d'Anfa, Casablanca • contact@fpa.ma
+                            </div>
+                          </div>
+
+                          <div style={{ textAlign: 'right' }}>
+                            <div style={{ fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--gray-400)', fontWeight: 700 }}>
+                              Destinataire (Client)
+                            </div>
+                            <div style={{ fontWeight: 700, fontSize: '1.05rem', color: 'var(--anthracite)' }}>
+                              {activeInvoice.client_name}
+                            </div>
+                            {activeInvoice.salutation && (
+                              <div style={{ fontSize: '0.82rem', color: 'var(--gray-600)', fontStyle: 'italic' }}>
+                                {activeInvoice.salutation}
+                              </div>
+                            )}
+                            {activeInvoice.client_ice && (
+                              <div style={{ fontSize: '0.82rem', color: 'var(--gray-500)' }}>
+                                ICE: {activeInvoice.client_ice}
+                              </div>
+                            )}
+                            {activeInvoice.client_email && (
+                              <div style={{ fontSize: '0.82rem', color: 'var(--gray-500)' }}>
+                                {activeInvoice.client_email}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', background: 'var(--gray-50)', padding: '1rem', borderRadius: 'var(--radius-sm)' }}>
+                          <div>
+                            <span style={{ fontSize: '0.72rem', color: 'var(--gray-400)', textTransform: 'uppercase', display: 'block' }}>Type</span>
+                            <strong style={{ fontSize: '0.85rem' }}>{activeInvoice.document_type || "Note d'honoraires"}</strong>
+                          </div>
+                          <div>
+                            <span style={{ fontSize: '0.72rem', color: 'var(--gray-400)', textTransform: 'uppercase', display: 'block' }}>Réf. Dossier</span>
+                            <strong style={{ fontSize: '0.85rem', color: 'var(--info)' }}>{activeInvoice.reference_text || '—'}</strong>
+                          </div>
+                          <div>
+                            <span style={{ fontSize: '0.72rem', color: 'var(--gray-400)', textTransform: 'uppercase', display: 'block' }}>Date d'émission</span>
+                            <strong style={{ fontSize: '0.85rem' }}>{activeInvoice.invoice_date}</strong>
+                          </div>
+                          <div>
+                            <span style={{ fontSize: '0.72rem', color: 'var(--gray-400)', textTransform: 'uppercase', display: 'block' }}>Date d'échéance</span>
+                            <strong style={{ fontSize: '0.85rem' }}>{activeInvoice.due_date || 'À réception'}</strong>
+                          </div>
+                        </div>
+
+                        {activeInvoice.service_date_text && (
+                          <div style={{ marginTop: '0.75rem', fontSize: '0.82rem', color: 'var(--gray-600)', background: 'var(--cream)', padding: '0.5rem 0.75rem', borderRadius: '4px' }}>
+                            <i className="ph ph-calendar-blank" style={{ marginRight: '0.35rem' }}></i>
+                            {activeInvoice.service_date_text}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Prestations Table */}
+                      <div style={{ background: '#fff', borderRadius: 'var(--radius-md)', border: '1px solid var(--gray-200)', overflow: 'hidden', boxShadow: 'var(--shadow-sm)' }}>
+                        <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--gray-200)', fontWeight: 700, fontSize: '0.95rem' }}>
+                          Détail des prestations & honoraires
+                        </div>
+                        <table className="billing-table" style={{ margin: 0 }}>
+                          <thead>
+                            <tr>
+                              <th>Description</th>
+                              <th>Précision / Réf.</th>
+                              <th style={{ textAlign: 'right' }}>Montant HT</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {activeInvoice.items && activeInvoice.items.length > 0 ? (
+                              activeInvoice.items.map((item, idx) => (
+                                <tr key={idx}>
+                                <td style={{ fontWeight: 600 }}>{item.description}</td>
+                                <td style={{ color: 'var(--gray-500)', fontSize: '0.82rem' }}>{item.detail || '—'}</td>
+                                <td style={{ textAlign: 'right', fontWeight: 600 }}>
+                                  {new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 2 }).format(item.total_ht)} MAD
+                                </td>
+                              </tr>
+                            ))
+                          ) : (
+                            <tr>
+                              <td colSpan={3} style={{ textAlign: 'center', color: 'var(--gray-400)', padding: '1.5rem' }}>
+                                Honoraires professionnels forfaitaires
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+
+                      {/* Totals Calculation */}
+                      <div style={{ padding: '1.25rem 1.5rem', background: 'var(--gray-50)', borderTop: '1px solid var(--gray-200)', display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'flex-end' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', width: '280px', fontSize: '0.88rem' }}>
+                          <span style={{ color: 'var(--gray-600)' }}>Total Honoraires HT:</span>
+                          <strong>{new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 2 }).format(activeInvoice.subtotal_ht)} MAD</strong>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', width: '280px', fontSize: '0.88rem' }}>
+                          <span style={{ color: 'var(--gray-600)' }}>TVA ({activeInvoice.tva_rate}%):</span>
+                          <strong>{new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 2 }).format(activeInvoice.tva_amount)} MAD</strong>
+                        </div>
+                        {activeInvoice.disbursements > 0 && (
+                          <div style={{ display: 'flex', justifyContent: 'space-between', width: '280px', fontSize: '0.88rem' }}>
+                            <span style={{ color: 'var(--gray-600)' }}>Débours:</span>
+                            <strong>{new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 2 }).format(activeInvoice.disbursements)} MAD</strong>
+                          </div>
+                        )}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', width: '280px', fontSize: '1.15rem', fontWeight: 800, color: 'var(--gold-dark)', borderTop: '2px solid var(--gray-300)', paddingTop: '0.5rem', marginTop: '0.25rem' }}>
+                          <span>Total TTC:</span>
+                          <span>{new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 2 }).format(activeInvoice.total_ttc)} MAD</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Bank & Regulation Info */}
+                    <div style={{ background: '#fff', borderRadius: 'var(--radius-md)', border: '1px solid var(--gray-200)', padding: '1.25rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                      <div>
+                        <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--gray-400)', textTransform: 'uppercase' }}>Règlement par virement bancaire</span>
+                        <div style={{ fontWeight: 600, fontSize: '0.88rem', color: 'var(--anthracite)', marginTop: '0.2rem' }}>Banque Populaire Casablanca</div>
+                        <div style={{ fontSize: '0.82rem', fontFamily: 'monospace', color: 'var(--gray-600)' }}>RIB: 123 456 7890123456789012 34</div>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--gray-400)', textTransform: 'uppercase' }}>Identifiants fiscaux</span>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--gray-600)', marginTop: '0.2rem' }}>IF: 12345678 • RC: 98765 Casablanca</div>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--gray-600)' }}>ICE: 001234567890012</div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Bottom Footer */}
+            <div style={{
+              padding: '0.85rem 1.5rem',
+              borderTop: '1px solid var(--gray-200)',
+              background: '#ffffff',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '1rem',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <span style={{ fontSize: '0.85rem', color: 'var(--gray-500)' }}>
+                  Total à régler:
+                </span>
+                <span style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--gold-dark)', fontFamily: 'var(--font-heading)' }}>
+                  {new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 2 }).format(activeInvoice.total_ttc)} MAD
+                </span>
+                <span className={`invoice-status ${activeInvoice.status}`} style={{ fontSize: '0.75rem' }}>
+                  {statusLabels[activeInvoice.status] || activeInvoice.status}
+                </span>
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
+                <button
+                  type="button"
+                  onClick={() => handleSendEmail(activeInvoice.id)}
+                  className="billing-btn billing-btn-primary"
+                  disabled={sendingEmail === activeInvoice.id}
+                  style={{ background: 'var(--success)', padding: '0.5rem 1rem', fontSize: '0.82rem' }}
+                >
+                  <i className="ph ph-paper-plane-tilt"></i> {sendingEmail === activeInvoice.id ? 'Envoi...' : 'Envoyer par e-mail'}
+                </button>
+                <a
+                  href={`/api/billing/invoices/${activeInvoice.id}/pdf`}
+                  download={`${activeInvoice.invoice_number}.pdf`}
+                  className="billing-btn billing-btn-secondary"
+                  style={{ padding: '0.5rem 1rem', fontSize: '0.82rem' }}
+                >
+                  <i className="ph ph-download-simple"></i> Télécharger PDF
+                </a>
+                <button
+                  type="button"
+                  onClick={handleClosePreview}
+                  className="billing-btn billing-btn-secondary"
+                  style={{ padding: '0.5rem 1rem', fontSize: '0.82rem' }}
+                >
+                  Fermer
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      );
+    })()}
     </div>
   );
 }
